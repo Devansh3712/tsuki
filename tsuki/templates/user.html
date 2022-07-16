@@ -1,0 +1,17 @@
+{% extends "base.html" %} {% block title %}Tsuki - User{% endblock %} {% block
+content %}
+<h2>User Information</h2>
+<br />
+{% for column in user_data %}
+<p class="user-data">
+  <b>{{ column.replace("_", " ").title() }}:</b> {{ user_data[column] }}
+</p>
+{% endfor %}
+<br />
+{% if not user_data["verified"] %}
+<p>➜ <a href="/auth/verify">Verify account</a></p>
+{% endif %}
+<p class="user-data">➜ <a href="/user/update-username">Update username</a></p>
+<p class="user-data">➜ <a href="/user/update-password">Update password</a></p>
+<p class="user-data">➜ <a href="/user/delete">Delete account</a></p>
+{% endblock %}

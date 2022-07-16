@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="{{ url_for('static', path='/images/tsuki.ico') }}"
+      rel="icon"
+      type="image/x-icon"
+    />
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet" />
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    <div class="sidebar">
+      <a href="/">/HOME</a>
+      <a href="/signup">/SIGNUP</a>
+      <a href="/login">/LOGIN</a>
+      <a href="#">/FEED</a>
+      <a href="#">/POST</a>
+      <a href="/user">/USER</a>
+      <a href="/logout">/LOGOUT</a>
+    </div>
+    <div class="main">
+      <h1 class="title">Tsuki</h1>
+      {% block content %}{% endblock %}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,84 @@
+body {
+    font-family: 'Courier New', Courier, monospace;
+    padding-left: 15px;
+}
+
+button {
+    background-color: rgb(110, 110, 110);
+    border: none;
+    color: white;
+    padding: 5px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: inherit;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #333333;
+    cursor: pointer;
+}
+
+input {
+    font-family: inherit;
+    display: inline-block;
+    width: 300px;
+    margin-bottom: 15px;
+}
+
+label {
+    font-size: 16px;
+}
+
+p {
+    font-size: 18px;
+}
+
+p a {
+    text-decoration: none;
+    color: black;
+}
+
+p a:hover {
+    color: rgb(110, 110, 110);
+    cursor: pointer;
+}
+
+.main {
+    margin-left: 160px;
+}
+
+.sidebar {
+    height: 100%;
+    width: 140px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    padding-top: 20px;
+    border-right: 2px solid #dddddd;
+}
+
+.sidebar a {
+    font-size: 18px;
+    text-decoration: none;
+    color: black;
+    display: block;
+    padding-top: 10px;
+    padding-left: 20px;
+}
+
+.sidebar a:hover {
+    color: rgb(110, 110, 110);
+    cursor: pointer;
+}
+
+.signup {
+    margin-top: 15px;
+}
+
+.user-data {
+    margin-top: -10px;
+}

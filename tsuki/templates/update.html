@@ -1,0 +1,17 @@
+{% extends "base.html" %} {% block title %}Tsuki - Update Account{% endblock %}
+{% block content %}
+<h2>Update {{ type.title() }}</h2>
+<p>Update your Tsuki account {{ type }}.</p>
+<form name="update" action="/user/update-{{ type }}" method="POST">
+  <label for="{{ type }}">{{ type.title() }}</label>
+  <br />
+  {% if type == "username" %}
+  <input name="username" type="text" maxlength="32" required />
+  {% else %}
+  <input name="password" type="password" maxlength="32" required />
+  {% endif %}
+  <br />
+  <button type="submit">Submit</button>
+</form>
+<p>{{ message }}</p>
+{% endblock %}

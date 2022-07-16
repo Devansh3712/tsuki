@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "tsuki"
+version = "0.1.0"
+description = ""
+authors = ["Devansh3712 <devanshamity@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic = {extras = ["dotenv"], version = "^1.9.1"}
+fastapi = "^0.78.0"
+uvicorn = {extras = ["standard"], version = "^0.18.2"}
+psycopg = {extras = ["binary"], version = "^3.0.15"}
+email-validator = "^1.2.1"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+python-multipart = "^0.0.5"
+google-api-python-client = "^2.53.0"
+google-auth-httplib2 = "^0.1.0"
+google-auth-oauthlib = "^0.5.2"
+Jinja2 = "^3.1.2"
+itsdangerous = "^2.1.2"
+watchdog = "^2.1.9"
+
+[tool.poetry.dev-dependencies]
+black = "^22.6.0"
+pyclean = "^2.2.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

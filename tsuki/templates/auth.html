@@ -1,0 +1,26 @@
+{% extends "base.html" %} {% block title %}Tsuki - {{ type.title() }}{% endblock
+%} {% block content %} {% if type == "signup" %}
+<h2>Sign Up</h2>
+<p>Sign up for a Tsuki account.</p>
+{% else %}
+<h2>Login</h2>
+<p>Login to your Tsuki account.</p>
+{% endif %}
+<form name="{{ type }}" action="/auth/{{ type }}" method="POST">
+  {% if type == "signup" %}
+  <label for="email">Email</label>
+  <br />
+  <input name="email" type="email" required />
+  <br />
+  {% endif %}
+  <label for="username">Username</label>
+  <br />
+  <input name="username" type="text" maxlength="32" required />
+  <br />
+  <label for="password">Password</label>
+  <br />
+  <input name="password" type="password" maxlength="32" required />
+  <br />
+  <button type="submit">{{ type.title() }}</button>
+</form>
+{% endblock %}

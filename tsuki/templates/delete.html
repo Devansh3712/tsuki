@@ -1,0 +1,15 @@
+{% extends "base.html" %} {% block title %}Tsuki - Delete Account{% endblock %}
+{% block content %}
+<h2>Delete Account</h2>
+<p>
+  Permanently delete your Tsuki account. On deleting your account, all related
+  data will be lost.
+</p>
+<form name="delete" action="/user/delete" method="POST">
+  <label for="password">Password</label>
+  <br />
+  <input name="password" type="password" maxlength="32" required />
+  <br />
+  <button type="submit">Delete account</button>
+</form>
+{% endblock %}
