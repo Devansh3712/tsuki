@@ -14,7 +14,7 @@ async def initdb():
     async with connection:
         async with connection.cursor() as cursor:
             await cursor.execute(
-                """CREATE TABLE IF NOT EXISTS users (
+                """CREATE TABLE IF NOT EXISTS t_users (
                     email       VARCHAR(320)    UNIQUE NOT NULL,
                     username    VARCHAR(32)     PRIMARY KEY,
                     password    VARCHAR(64)     NOT NULL,
@@ -36,7 +36,7 @@ async def initdb():
                     created_at  TIMESTAMPTZ     NOT NULL,
                     CONSTRAINT fk_username
                         FOREIGN KEY(username)
-                            REFERENCES users(username)
+                            REFERENCES t_users(username)
                             ON DELETE CASCADE
                 )"""
             )
@@ -46,7 +46,7 @@ async def initdb():
                     following   VARCHAR(32)     NOT NULL,
                     CONSTRAINT fk_username
                         FOREIGN KEY(username)
-                            REFERENCES users(username)
+                            REFERENCES t_users(username)
                             ON DELETE CASCADE
                 )"""
             )
@@ -100,7 +100,7 @@ async def create_user(user: User) -> bool:
         async with connection:
             async with connection.cursor() as cursor:
                 await cursor.execute(
-                    """INSERT INTO users
+                    """INSERT INTO t_users
                 VALUES (%(email)s, %(username)s, %(password)s, %(verified)s, %(created_at)s)""",
                     user.dict(),
                 )
@@ -117,7 +117,7 @@ async def read_user(username: str) -> User | None:
         async with connection:
             async with connection.cursor() as cursor:
                 await cursor.execute(
-                    "SELECT * FROM users WHERE username = %s", (username,)
+                    "SELECT * FROM t_users WHERE username = %s", (username,)
                 )
                 result = await cursor.fetchone()
                 user = User(
@@ -141,7 +141,9 @@ async def update_user(username: str, updates: Mapping[str, Any]) -> bool:
             async with connection.cursor() as cursor:
                 for column in updates:
                     await cursor.execute(
-                        sql.SQL("UPDATE users SET {} = {} WHERE username = {}").format(
+                        sql.SQL(
+                            "UPDATE t_users SET {} = {} WHERE username = {}"
+                        ).format(
                             sql.Identifier(column),
                             updates[column],
                             username,
@@ -160,7 +162,7 @@ async def delete_user(username: str) -> bool:
         async with connection:
             async with connection.cursor() as cursor:
                 await cursor.execute(
-                    "DELETE FROM users WHERE username = %s", (username,)
+                    "DELETE FROM t_users WHERE username = %s", (username,)
                 )
                 return True
     except:
