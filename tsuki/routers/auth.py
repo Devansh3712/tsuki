@@ -74,7 +74,8 @@ async def get_current_user(request: fastapi.Request) -> User | None:
 
 @auth.post("/signup", response_class=HTMLResponse)
 async def signup(request: fastapi.Request):
-    form = await request.form()
+    form = dict(await request.form())
+    form["created_at"] = datetime.now()
     user = User(**form)
     user_data = await read_user(user.username)
     if user_data:

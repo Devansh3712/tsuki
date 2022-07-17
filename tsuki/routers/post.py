@@ -1,4 +1,6 @@
 import os
+from datetime import datetime
+from uuid import uuid4
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
@@ -39,7 +41,9 @@ async def create_post_(request: Request, user: User = Depends(get_current_user))
                 "message": "User not logged in.",
             },
         )
-    form = await request.form()
+    form = dict(await request.form())
+    form["id"] = uuid4().hex
+    form["created_at"] = datetime.now()
     post_data = Post(**form)
     result = await create_post(user.username, post_data)
     if not result:
