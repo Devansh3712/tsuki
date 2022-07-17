@@ -27,7 +27,7 @@ async def get_user(request: Request, user: User = Depends(get_current_user)):
         )
     user_data = user.dict()
     del user_data["password"]
-    posts = await read_posts(user.username)
+    posts = await read_recent_posts(user.username)
     followers = await read_followers(user.username)
     following = await read_following(user.username)
     user_data["posts"] = len(posts)
@@ -63,7 +63,7 @@ async def get_user_by_name(
     user_data = _user.dict()
     del user_data["email"]
     del user_data["password"]
-    posts = await read_posts(username)
+    posts = await read_recent_posts(username)
     followers = await read_followers(username)
     following = await read_following(username)
     user_data["posts"] = len(posts)

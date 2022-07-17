@@ -1,0 +1,13 @@
+{% extends "base.html" %} {% block title %}Tsuki - Feed{% endblock %} {% block
+content %}
+<h2>User Feed</h2>
+<br />
+{% if posts %} {% for post in posts %}
+<a href="/post/{{ post.id }}">
+  <h4><a href="/user/{{ post.username }}">@{{ post.username }}</a></h4>
+  <p>{{ post.body }}</p>
+  <p class="separator">{{ post.created_at }}</p>
+</a>
+{% endfor %} {% else %}
+<p style="color: rgb(110, 110, 110)">No posts found.</p>
+{% endif %} {% endblock %}

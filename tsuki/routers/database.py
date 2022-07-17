@@ -204,7 +204,7 @@ async def read_post(_id: str) -> PostResponse | None:
         return None
 
 
-async def read_posts(username: str) -> List[PostResponse]:
+async def read_recent_posts(username: str) -> List[PostResponse]:
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -213,7 +213,38 @@ async def read_posts(username: str) -> List[PostResponse]:
             async with connection.cursor() as cursor:
                 await cursor.execute(
                     """SELECT * FROM posts WHERE username = %s
-                ORDER BY created_at DESC LIMIT 5""",
+                ORDER BY created_at DESC
+                LIMIT 5""",
+                    (username,),
+                )
+                results = await cursor.fetchall()
+                posts = []
+                for data in results:
+                    post = PostResponse(
+                        **{
+                            key: data[index]
+                            for index, key in enumerate(PostResponse.__fields__.keys())
+                        }
+                    )
+                    post.created_at = post.created_at.strftime("%d %B %Y, %H:%M:%S")
+                    posts.append(post)
+                return posts
+    except:
+        return []
+
+
+async def read_feed_posts(username: str) -> List[PostResponse]:
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    try:
+        async with connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute(
+                    """SELECT * FROM posts WHERE username IN
+                (SELECT following FROM follows WHERE username = %s)
+                ORDER BY created_at DESC
+                LIMIT 10""",
                     (username,),
                 )
                 results = await cursor.fetchall()

@@ -9,6 +9,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from tsuki.config import secrets
 from tsuki.routers.auth import auth
 from tsuki.routers.database import initdb
+from tsuki.routers.feed import feed
 from tsuki.routers.models import User
 from tsuki.routers.post import post
 from tsuki.routers.user import user, get_current_user
@@ -26,6 +27,7 @@ app.mount(
     "/static", StaticFiles(directory=os.path.join("tsuki", "static")), name="static"
 )
 app.include_router(auth)
+app.include_router(feed)
 app.include_router(post)
 app.include_router(user)
 templates = Jinja2Templates(directory=os.path.join("tsuki", "templates"))
