@@ -1,4 +1,5 @@
 import os
+import pytz
 from datetime import datetime
 from uuid import uuid4
 
@@ -43,7 +44,7 @@ async def create_post_(request: Request, user: User = Depends(get_current_user))
         )
     form = dict(await request.form())
     form["id"] = uuid4().hex
-    form["created_at"] = datetime.now()
+    form["created_at"] = datetime.now(pytz.timezone("Asia/Kolkata"))
     post_data = Post(**form)
     result = await create_post(user.username, post_data)
     if not result:

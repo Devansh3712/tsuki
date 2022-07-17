@@ -1,5 +1,6 @@
 import base64
 import os
+import pytz
 from datetime import datetime, timedelta
 from email.mime.text import MIMEText
 from uuid import uuid4
@@ -75,7 +76,7 @@ async def get_current_user(request: fastapi.Request) -> User | None:
 @auth.post("/signup", response_class=HTMLResponse)
 async def signup(request: fastapi.Request):
     form = dict(await request.form())
-    form["created_at"] = datetime.now()
+    form["created_at"] = datetime.now(pytz.timezone("Asia/Kolkata"))
     user = User(**form)
     user_data = await read_user(user.username)
     if user_data:
