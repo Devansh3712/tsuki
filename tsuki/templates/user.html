@@ -1,17 +1,52 @@
 {% extends "base.html" %} {% block title %}Tsuki - User{% endblock %} {% block
 content %}
-<h2>User Information</h2>
-<br />
-{% for column in user_data %}
-<p class="user-data">
-  <b>{{ column.replace("_", " ").title() }}:</b> {{ user_data[column] }}
-</p>
-{% endfor %}
-<br />
-{% if not user_data["verified"] %}
-<p>➜ <a href="/auth/verify">Verify account</a></p>
-{% endif %}
-<p class="user-data">➜ <a href="/user/update-username">Update username</a></p>
-<p class="user-data">➜ <a href="/user/update-password">Update password</a></p>
-<p class="user-data">➜ <a href="/user/delete">Delete account</a></p>
+<div class="row">
+  <div class="column">
+    <h2>User Information</h2>
+    <br />
+    {% for column in user_data %}
+    <p class="user-data">
+      <b>{{ column.replace("_", " ").title() }}:</b> {{ user_data[column] }}
+    </p>
+    {% endfor %}{% if not settings %}
+    <br />
+    <form
+      name="follow"
+      action="/user/{{ user_data['username'] }}/toggle-follow/"
+      method="POST"
+    >
+      {% if follows %}
+      <button type="submit">Unfollow</button>
+      {% else %}
+      <button type="submit">Follow</button>
+      {% endif %}
+    </form>
+    {% endif %} {% if settings %}
+    <br />
+    <h2>Settings</h2>
+    {% if not user_data["verified"] %}
+    <p>➜ <a href="/auth/verify">Verify account</a></p>
+    {% endif %}
+    <p class="user-data">
+      ➜ <a href="/user/update-username">Update username</a>
+    </p>
+    <p class="user-data">
+      ➜ <a href="/user/update-password">Update password</a>
+    </p>
+    <p class="user-data">➜ <a href="/user/delete">Delete account</a></p>
+    {% endif %}
+  </div>
+  <div class="column">
+    <h2>Recent Posts</h2>
+    <br />
+    {% if posts %} {% for post in posts %}
+    <a href="/post/{{ post.id }}">
+      <p>{{ post.body }}</p>
+      <p class="separator">{{ post.created_at }}</p>
+    </a>
+    {% endfor %} {% else %}
+    <p style="color: rgb(110, 110, 110)">No posts found.</p>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

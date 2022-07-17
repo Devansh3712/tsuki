@@ -25,11 +25,70 @@ async def get_user(request: Request, user: User = Depends(get_current_user)):
                 "message": "User not logged in.",
             },
         )
-    user.created_at = user.created_at.strftime("%d %B %Y, %H:%M:%S")
     user_data = user.dict()
     del user_data["password"]
+    posts = await read_posts(user.username)
+    followers = await read_followers(user.username)
+    following = await read_following(user.username)
+    user_data["posts"] = len(posts)
+    user_data["followers"] = len(followers)
+    user_data["following"] = len(following)
     return templates.TemplateResponse(
-        "user.html", {"request": request, "user_data": user_data}
+        "user.html",
+        {
+            "request": request,
+            "user_data": user_data,
+            "settings": True,
+            "posts": posts,
+        },
+    )
+
+
+@user.get("/{username}", response_class=HTMLResponse)
+async def get_user_by_name(
+    username: str, request: Request, user: User = Depends(get_current_user)
+):
+    if user and username == user.username:
+        return await get_user(request, user)
+    _user = await read_user(username)
+    if not _user:
+        return templates.TemplateResponse(
+            "error.html",
+            {
+                "request": request,
+                "error": "404 Not Found.",
+                "message": "User not found.",
+            },
+        )
+    user_data = _user.dict()
+    del user_data["email"]
+    del user_data["password"]
+    posts = await read_posts(username)
+    followers = await read_followers(username)
+    following = await read_following(username)
+    user_data["posts"] = len(posts)
+    user_data["followers"] = len(followers)
+    user_data["following"] = len(following)
+    _follows = await follows(user.username, username) if user else None
+    if _follows is None:
+        return templates.TemplateResponse(
+            "user.html",
+            {
+                "request": request,
+                "user_data": user_data,
+                "settings": False,
+                "posts": posts,
+            },
+        )
+    return templates.TemplateResponse(
+        "user.html",
+        {
+            "request": request,
+            "user_data": user_data,
+            "settings": False,
+            "posts": posts,
+            "follows": _follows,
+        },
     )
 
 
@@ -175,3 +234,20 @@ async def delete_user_(request: Request, user: User = Depends(get_current_user))
             "message": "Account deleted successfully. Thankyou for using Tsuki :)",
         },
     )
+
+
+@user.post("/{username}/toggle-follow")
+async def toggle_follow_(
+    username: str, request: Request, user: User = Depends(get_current_user)
+):
+    if not user:
+        return templates.TemplateResponse(
+            "error.html",
+            {
+                "request": request,
+                "error": "401 Unauthorized",
+                "message": "User not logged in.",
+            },
+        )
+    await toggle_follow(user.username, username)
+    return await get_user_by_name(username, request, user)

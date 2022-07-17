@@ -1,0 +1,26 @@
+{% extends "base.html" %} {% block title %}Tsuki - Post{% endblock %} {% block
+content %}
+<h2>Create Post</h2>
+<p>Create a new post from your account.</p>
+<form name="post" action="/post" method="POST">
+  <textarea
+    name="body"
+    style="
+      font-family: inherit;
+      font-size: 16px;
+      resize: none;
+      height: 180px;
+      width: 500px;
+      outline: none;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      border: 2px solid #ccc;
+      border-radius: 15px;
+      padding: 20px;
+    "
+    maxlength="320"
+  ></textarea>
+  <br />
+  <button type="submit">Create</button>
+</form>
+{% endblock %}

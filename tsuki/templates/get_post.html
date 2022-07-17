@@ -1,0 +1,10 @@
+{% extends "base.html" %} {% block title %}Tsuki - Post{% endblock %} {% block
+content %}
+<u>
+  <h3>
+    <a href="/user/{{ user }}">@{{ user }}</a>
+  </h3>
+</u>
+<p>{{ body }}</p>
+<p>{{ timestamp }}</p>
+{% endblock %}

@@ -1,3 +1,13 @@
+a {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    color: rgb(110, 110, 110);
+    cursor: pointer;
+}
+
 body {
     font-family: 'Courier New', Courier, monospace;
     padding-left: 15px;
@@ -35,18 +45,29 @@ p {
     font-size: 18px;
 }
 
-p a {
-    text-decoration: none;
-    color: black;
+u {
+    text-underline-offset: 1px;
 }
 
-p a:hover {
-    color: rgb(110, 110, 110);
-    cursor: pointer;
+.column {
+    float: left;
+    width: 50%;
 }
 
 .main {
     margin-left: 160px;
+}
+
+.row:after {
+    display: table;
+    clear: both;
+}
+
+.separator {
+    padding-bottom: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    border-bottom: 2px solid #ccc;
 }
 
 .sidebar {
@@ -58,7 +79,7 @@ p a:hover {
     left: 0;
     overflow-x: hidden;
     padding-top: 20px;
-    border-right: 2px solid #dddddd;
+    border-right: 2px solid #ccc;
 }
 
 .sidebar a {
