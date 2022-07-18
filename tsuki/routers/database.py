@@ -143,7 +143,7 @@ async def read_users(username: str) -> List[User]:
                     """SELECT * FROM t_users WHERE username LIKE %s
                     ORDER BY username
                     LIMIT 10""",
-                    (f"%{username}%",),
+                    ("%" + username + "%",),
                 )
                 results = await cursor.fetchall()
                 users = []

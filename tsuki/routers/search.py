@@ -23,7 +23,7 @@ async def search_user_html(request: Request):
 async def search_user(request: Request, user: User = Depends(get_current_user)):
     form = await request.form()
     # Set a search cookie for use in toggle follow function
-    if not request.session.get("search"):
+    if form.get("search"):
         request.session["search"] = form["search"]
     users = await read_users(request.session["search"])
     if not users:
