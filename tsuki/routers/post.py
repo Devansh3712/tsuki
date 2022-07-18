@@ -28,6 +28,15 @@ async def create_post_html(request: Request, user: User = Depends(get_current_us
                 "message": "User not logged in.",
             },
         )
+    if not user.verified:
+        return templates.TemplateResponse(
+            "error.html",
+            {
+                "request": request,
+                "error": "403 Forbidden",
+                "message": "Verify your account to make posts.",
+            },
+        )
     return templates.TemplateResponse("make_post.html", {"request": request})
 
 

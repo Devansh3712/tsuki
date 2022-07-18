@@ -15,7 +15,14 @@
   {% endif %}
   <label for="username">Username</label>
   <br />
-  <input name="username" type="text" maxlength="32" required />
+  <input
+    name="username"
+    type="text"
+    maxlength="32"
+    pattern="^(?=.{1,32}$)[a-zA-Z0-9._]"
+    title="Username can only contain alphabets, digits periods (.) and underscore (_)"
+    required
+  />
   <br />
   <label for="password">Password</label>
   <br />
