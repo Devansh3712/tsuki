@@ -7,8 +7,8 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 
 from tsuki.config import secrets
+from tsuki.database import initdb
 from tsuki.routers.auth import auth
-from tsuki.routers.database import initdb
 from tsuki.routers.feed import feed
 from tsuki.routers.models import User
 from tsuki.routers.post import post

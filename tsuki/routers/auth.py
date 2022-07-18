@@ -6,10 +6,10 @@ from email.mime.text import MIMEText
 from uuid import uuid4
 
 import fastapi
+import google.auth.transport.requests as google_auth
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from jose import jwt
@@ -17,8 +17,10 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 
 from tsuki.config import secrets
-from tsuki.routers.database import *
+from tsuki.database import *
+from tsuki.oauth import *
 from tsuki.routers.models import User
+from tsuki.routers.user import get_user
 
 
 auth = APIRouter(prefix="/auth", tags=["Authorization"])
@@ -30,15 +32,6 @@ password_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
 class Login(BaseModel):
     username: str
     password: str
-
-
-def create_access_token(username: str):
-    token = jwt.encode(
-        {"user": username, "iat": datetime.now(), "iss": secrets.ISSUER},
-        secrets.SECRET_KEY,
-        algorithm="HS256",
-    )
-    return token
 
 
 async def create_verification_id(username: str) -> str:
@@ -56,21 +49,6 @@ async def create_verification_id(username: str) -> str:
     # Create a short url to mask JWT
     await create_short_url(token, _id)
     return _id
-
-
-async def get_current_user(request: fastapi.Request) -> User | None:
-    try:
-        token: str = request.session["Authorization"]
-        payload = jwt.decode(token, secrets.SECRET_KEY, algorithms=["HS256"])
-        username: str = payload.get("user")
-        if not username:
-            return None
-    except:
-        return None
-    user = await read_user(username)
-    if not user:
-        return None
-    return user
 
 
 @auth.post("/signup", response_class=HTMLResponse)
@@ -101,8 +79,7 @@ async def signup(request: fastapi.Request):
                 "message": "Unable to create user, please try again later.",
             },
         )
-    if request.session.get("Authorization"):
-        del request.session["Authorization"]
+    request.session["Authorization"] = create_access_token(user.username)
     return await send_verification_mail(request, user, "Account created successfully.")
 
 
@@ -129,11 +106,10 @@ async def login(request: fastapi.Request):
                 "message": "Incorrect password.",
             },
         )
+    # Log in the new user
     access_token = create_access_token(user.username)
     request.session["Authorization"] = access_token
-    return templates.TemplateResponse(
-        "response.html", {"request": request, "message": "Logged in successfully."}
-    )
+    return await get_user(request, user_data)
 
 
 @auth.get("/verify", response_class=HTMLResponse)
@@ -168,7 +144,7 @@ async def send_verification_mail(
         ["https://mail.google.com/"],
     )
     if not credentials.valid:
-        credentials.refresh(Request())
+        credentials.refresh(google_auth.Request())
 
     with open(os.path.join(parent_dir, "templates", "verify.html")) as infile:
         verification_template = infile.read()

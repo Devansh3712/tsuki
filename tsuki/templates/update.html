@@ -2,7 +2,7 @@
 {% block content %}
 <h2>Update {{ type.title() }}</h2>
 <p>Update your Tsuki account {{ type }}.</p>
-<form name="update" action="/user/update-{{ type }}" method="POST">
+<form name="update" action="/user/settings/update-{{ type }}" method="POST">
   <label for="{{ type }}">{{ type.title() }}</label>
   <br />
   {% if type == "username" %}

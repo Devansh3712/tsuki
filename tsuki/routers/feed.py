@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from tsuki.routers.auth import get_current_user
-from tsuki.routers.database import *
+from tsuki.database import *
+from tsuki.oauth import get_current_user
 from tsuki.routers.models import User
 
 

@@ -38,6 +38,7 @@ async def initdb():
                         FOREIGN KEY(username)
                             REFERENCES t_users(username)
                             ON DELETE CASCADE
+                            ON UPDATE CASCADE
                 )"""
             )
             await cursor.execute(
@@ -48,6 +49,7 @@ async def initdb():
                         FOREIGN KEY(username)
                             REFERENCES t_users(username)
                             ON DELETE CASCADE
+                            ON UPDATE CASCADE
                 )"""
             )
 

@@ -3,15 +3,17 @@ import os
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from passlib.context import CryptContext
 
-from tsuki.routers.auth import create_access_token, get_current_user, password_ctx
-from tsuki.routers.database import *
+from tsuki.database import *
+from tsuki.oauth import *
 from tsuki.routers.models import User
 
 
 user = APIRouter(prefix="/user", tags=["Users"])
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 templates = Jinja2Templates(directory=os.path.join(parent_dir, "templates"))
+password_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 @user.get("/", response_class=HTMLResponse)
@@ -82,7 +84,7 @@ async def get_user_by_name(
     )
 
 
-@user.get("/update-password", response_class=HTMLResponse)
+@user.get("/settings/update-password", response_class=HTMLResponse)
 async def update_user_password_html(
     request: Request, user: User = Depends(get_current_user)
 ):
@@ -100,7 +102,7 @@ async def update_user_password_html(
     )
 
 
-@user.post("/update-password", response_class=HTMLResponse)
+@user.post("/settings/update-password", response_class=HTMLResponse)
 async def update_user_password(
     request: Request, user: User = Depends(get_current_user)
 ):
@@ -122,8 +124,8 @@ async def update_user_password(
     )
 
 
-@user.get("/update-username", response_class=HTMLResponse)
-async def update_user_username_html(
+@user.get("/settings/update-username", response_class=HTMLResponse)
+async def update_username_html(
     request: Request, user: User = Depends(get_current_user)
 ):
     if not user:
@@ -140,7 +142,7 @@ async def update_user_username_html(
     )
 
 
-@user.post("/update-username", response_class=HTMLResponse)
+@user.post("/settings/update-username", response_class=HTMLResponse)
 async def update_username(request: Request, user: User = Depends(get_current_user)):
     if not user:
         return templates.TemplateResponse(
@@ -180,7 +182,7 @@ async def update_username(request: Request, user: User = Depends(get_current_use
     )
 
 
-@user.get("/delete", response_class=HTMLResponse)
+@user.get("/settings/delete", response_class=HTMLResponse)
 async def delete_user_html(request: Request, user: User = Depends(get_current_user)):
     if not user:
         return templates.TemplateResponse(
@@ -194,7 +196,7 @@ async def delete_user_html(request: Request, user: User = Depends(get_current_us
     return templates.TemplateResponse("delete.html", {"request": request})
 
 
-@user.post("/delete", response_class=HTMLResponse)
+@user.post("/settings/delete", response_class=HTMLResponse)
 async def delete_user_(request: Request, user: User = Depends(get_current_user)):
     if not user:
         return templates.TemplateResponse(
