@@ -15,9 +15,9 @@ content %}
       action="/user/{{ user_data['username'] }}/toggle-follow/"
       method="POST"
     >
-      {% if follows %}
+      {% if follows == True %}
       <button type="submit">Unfollow</button>
-      {% else %}
+      {% elif follows == False %}
       <button type="submit">Follow</button>
       {% endif %}
     </form>

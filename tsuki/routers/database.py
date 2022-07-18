@@ -132,6 +132,35 @@ async def read_user(username: str) -> User | None:
         return None
 
 
+async def read_users(username: str) -> List[User]:
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    try:
+        async with connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute(
+                    """SELECT * FROM t_users WHERE username LIKE %s
+                    ORDER BY username
+                    LIMIT 10""",
+                    (f"%{username}%",),
+                )
+                results = await cursor.fetchall()
+                users = []
+                for data in results:
+                    user = User(
+                        **{
+                            key: data[index]
+                            for index, key in enumerate(User.__fields__.keys())
+                        }
+                    )
+                    user.created_at = user.created_at.strftime("%d %B %Y, %H:%M:%S")
+                    users.append(user)
+                return users
+    except:
+        return []
+
+
 async def update_user(username: str, updates: Mapping[str, Any]) -> bool:
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
@@ -287,7 +316,9 @@ async def toggle_follow(username: str, to_toggle: str):
             )
 
 
-async def follows(username: str, following: str) -> bool:
+async def follows(username: str, following: str) -> bool | None:
+    if username == following:
+        return None
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )

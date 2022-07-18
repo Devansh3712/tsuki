@@ -7,7 +7,7 @@ class User(BaseModel):
     email: EmailStr
     username: str
     password: str
-    verified: bool = False
+    verified: bool
     created_at: datetime
 
 

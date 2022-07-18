@@ -76,6 +76,7 @@ async def get_current_user(request: fastapi.Request) -> User | None:
 @auth.post("/signup", response_class=HTMLResponse)
 async def signup(request: fastapi.Request):
     form = dict(await request.form())
+    form["verified"] = False
     form["created_at"] = datetime.now(pytz.timezone("Asia/Kolkata"))
     user = User(**form)
     user_data = await read_user(user.username)

@@ -70,16 +70,6 @@ async def get_user_by_name(
     user_data["followers"] = len(followers)
     user_data["following"] = len(following)
     _follows = await follows(user.username, username) if user else None
-    if _follows is None:
-        return templates.TemplateResponse(
-            "user.html",
-            {
-                "request": request,
-                "user_data": user_data,
-                "settings": False,
-                "posts": posts,
-            },
-        )
     return templates.TemplateResponse(
         "user.html",
         {

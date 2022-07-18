@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 
 from tsuki.routers.auth import get_current_user
 from tsuki.routers.database import *
-from tsuki.routers.models import User, Post
+from tsuki.routers.models import User
 
 
 feed = APIRouter(prefix="/feed", tags=["Feed"])
@@ -14,7 +14,7 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 templates = Jinja2Templates(directory=os.path.join(parent_dir, "templates"))
 
 
-@feed.get("/")
+@feed.get("/", response_class=HTMLResponse)
 async def get_user_feed(request: Request, user: User = Depends(get_current_user)):
     if not user:
         return templates.TemplateResponse(
