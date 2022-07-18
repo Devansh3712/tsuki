@@ -32,6 +32,7 @@ button:hover {
 
 input {
     font-family: inherit;
+    width: 300px;
     display: inline-block;
     margin-bottom: 15px;
 }
