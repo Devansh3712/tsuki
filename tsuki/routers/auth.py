@@ -101,7 +101,8 @@ async def signup(request: fastapi.Request):
                 "message": "Unable to create user, please try again later.",
             },
         )
-    del request.session["Authorization"]
+    if request.session.get("Authorization"):
+        del request.session["Authorization"]
     return await send_verification_mail(request, user, "Account created successfully.")
 
 
