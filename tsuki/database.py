@@ -52,6 +52,17 @@ async def initdb():
                             ON UPDATE CASCADE
                 )"""
             )
+            await cursor.execute(
+                """CREATE TABLE IF NOT EXISTS votes (
+                    id          CHAR(32)    NOT NULL,
+                    username    VARCHAR(32) NOT NULL,
+                    CONSTRAINT fk_id
+                        FOREIGN KEY(id)
+                            REFERENCES posts(id)
+                            ON DELETE CASCADE
+                            ON UPDATE CASCADE
+                )"""
+            )
 
 
 # TODO:
@@ -316,7 +327,7 @@ async def toggle_follow(username: str, to_toggle: str):
     async with connection:
         async with connection.cursor() as cursor:
             await cursor.execute(
-                "SELECT * FROM follows where username = %s AND following = %s",
+                "SELECT * FROM follows WHERE username = %s AND following = %s",
                 (username, to_toggle),
             )
             following = await cursor.fetchone()
@@ -340,7 +351,7 @@ async def follows(username: str, following: str) -> bool | None:
     async with connection:
         async with connection.cursor() as cursor:
             await cursor.execute(
-                "SELECT * FROM follows where username = %s AND following = %s",
+                "SELECT * FROM follows WHERE username = %s AND following = %s",
                 (username, following),
             )
             following = await cursor.fetchone()
@@ -356,7 +367,7 @@ async def read_followers(username: str) -> List[str]:
     async with connection:
         async with connection.cursor() as cursor:
             await cursor.execute(
-                "SELECT username FROM follows where following = %s",
+                "SELECT username FROM follows WHERE following = %s",
                 (username,),
             )
             followers = await cursor.fetchall()
@@ -370,8 +381,63 @@ async def read_following(username: str) -> List[str]:
     async with connection:
         async with connection.cursor() as cursor:
             await cursor.execute(
-                "SELECT following FROM follows where username = %s",
+                "SELECT following FROM follows WHERE username = %s",
                 (username,),
             )
             following = await cursor.fetchall()
             return list(following)
+
+
+async def toggle_vote(username: str, _id: str):
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    async with connection:
+        async with connection.cursor() as cursor:
+            await cursor.execute(
+                "SELECT * FROM votes WHERE username = %s AND id = %s",
+                (username, _id),
+            )
+            voted = await cursor.fetchone()
+            if not voted:
+                await cursor.execute(
+                    "INSERT INTO votes VALUES (%s, %s)", (_id, username)
+                )
+                return
+            await cursor.execute(
+                "DELETE FROM votes WHERE username = %s AND id = %s",
+                (username, _id),
+            )
+
+
+async def voted(username: str, _id: str) -> bool:
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    async with connection:
+        async with connection.cursor() as cursor:
+            await cursor.execute(
+                "SELECT * FROM votes WHERE username = %s AND id = %s",
+                (username, _id),
+            )
+            voted = await cursor.fetchone()
+            if not voted:
+                return False
+            return True
+
+
+async def read_votes(_id: str) -> List[str]:
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    try:
+        async with connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute(
+                    "SELECT username FROM votes WHERE id = %s",
+                    (_id,),
+                )
+                votes = await cursor.fetchall()
+                return list(votes)
+    except:
+        []

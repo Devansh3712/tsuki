@@ -80,14 +80,18 @@ async def get_post(_id: str, request: Request, user: User = Depends(get_current_
                 "message": "Post not found or doesn't exist.",
             },
         )
-    if user and user.username == post.username:
-        return templates.TemplateResponse(
-            "get_post.html",
-            {"request": request, "post": post, "_self": True},
-        )
+    votes = await read_votes(_id)
+    _voted = await voted(user.username, _id) if user else None
+    _self = True if user and (user.username == post.username) else False
     return templates.TemplateResponse(
         "get_post.html",
-        {"request": request, "post": post},
+        {
+            "request": request,
+            "post": post,
+            "votes": len(votes),
+            "_self": _self,
+            "voted": _voted,
+        },
     )
 
 
@@ -108,3 +112,20 @@ async def delete_post_(
     return templates.TemplateResponse(
         "response.html", {"request": request, "message": "Post deleted."}
     )
+
+
+@post.get("/{_id}/toggle-vote")
+async def toggle_vote_(
+    _id: str, request: Request, user: User = Depends(get_current_user)
+):
+    if not user:
+        return templates.TemplateResponse(
+            "error.html",
+            {
+                "request": request,
+                "error": "401 Unauthorized",
+                "message": "User not logged in.",
+            },
+        )
+    await toggle_vote(user.username, _id)
+    return await get_post(_id, request, user)

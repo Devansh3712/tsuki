@@ -3,8 +3,8 @@ content %}
 <h2>User Feed</h2>
 <br />
 {% if posts %} {% for post in posts %}
+<h3><a href="/user/{{ post.username }}">@{{ post.username }}</a></h3>
 <a href="/post/{{ post.id }}">
-  <h4><a href="/user/{{ post.username }}">@{{ post.username }}</a></h4>
   <p>{{ post.body }}</p>
   <p class="separator">{{ post.created_at }}</p>
 </a>

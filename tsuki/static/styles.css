@@ -54,6 +54,7 @@ p {
 }
 
 u {
+    color: white;
     text-underline-offset: 1px;
 }
 
@@ -118,9 +119,4 @@ u {
 
 .user-data {
     margin-top: -10px;
-}
-
-#icon:hover {
-    color: rgb(160, 160, 160) !important;
-    cursor: pointer !important;
 }

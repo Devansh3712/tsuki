@@ -1,5 +1,6 @@
 {% extends "base.html" %} {% block title %}Tsuki - Post{% endblock %} {% block
 content %}
+<br />
 <u>
   <h3>
     <a href="/user/{{ post.username }}">@{{ post.username }}</a>
@@ -7,10 +8,21 @@ content %}
 </u>
 <p>{{ post.body }}</p>
 <h4>{{ post.created_at }}</h4>
-{% if _self %}
 <p class="post-settings">
+  {{ votes }} Likes
+  <br />
+  <br />
+  <a href="/post/{{ post.id }}/toggle-vote">
+    {% if voted %}
+    <i class="fa-solid fa-heart"></i>
+    {% else %}
+    <i class="fa-regular fa-heart"></i>
+    {% endif %} Like
+  </a>
+  {% if _self %} &nbsp;
   <a href="/post/{{ post.id }}/delete"
     ><i class="fa-regular fa-trash-can"></i> Delete</a
   >
+  {% endif %}
 </p>
-{% endif %} {% endblock %}
+{% endblock %}
