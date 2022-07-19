@@ -1,14 +1,16 @@
 a {
     text-decoration: none;
-    color: black;
+    color: white;
 }
 
 a:hover {
-    color: rgb(110, 110, 110);
+    color: rgb(160, 160, 160);;
     cursor: pointer;
 }
 
 body {
+    background-color: rgb(15, 15, 15);
+    color: white;
     font-family: 'Courier New', Courier, monospace;
     padding-left: 15px;
 }
@@ -31,10 +33,16 @@ button:hover {
 }
 
 input {
+    background-color: rgb(15, 15, 15);
+    color: white;
     font-family: inherit;
     width: 300px;
+    height: 25px;
     display: inline-block;
+    margin-top: 5px;
     margin-bottom: 15px;
+    border: 1px solid rgb(130, 130, 130);
+    border-radius: 5px
 }
 
 label {
@@ -67,7 +75,7 @@ u {
     padding-bottom: 15px;
     font-size: 14px;
     font-weight: bold;
-    border-bottom: 2px solid #ccc;
+    border-bottom: 2px solid rgb(160, 160, 160);;
 }
 
 .sidebar {
@@ -79,20 +87,20 @@ u {
     left: 0;
     overflow-x: hidden;
     padding-top: 20px;
-    border-right: 2px solid #ccc;
+    border-right: 2px solid rgb(160, 160, 160);;
 }
 
 .sidebar a {
     font-size: 18px;
     text-decoration: none;
-    color: black;
+    color: white;
     display: block;
     padding-top: 10px;
     padding-left: 20px;
 }
 
 .sidebar a:hover {
-    color: rgb(110, 110, 110);
+    color: rgb(160, 160, 160);
     cursor: pointer;
 }
 
