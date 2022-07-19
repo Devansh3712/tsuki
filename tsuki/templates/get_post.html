@@ -2,9 +2,15 @@
 content %}
 <u>
   <h3>
-    <a href="/user/{{ user }}">@{{ user }}</a>
+    <a href="/user/{{ post.username }}">@{{ post.username }}</a>
   </h3>
 </u>
-<p>{{ body }}</p>
-<p>{{ timestamp }}</p>
-{% endblock %}
+<p>{{ post.body }}</p>
+<h4>{{ post.created_at }}</h4>
+{% if _self %}
+<p class="post-settings">
+  <a href="/post/{{ post.id }}/delete"
+    ><i class="fa-regular fa-trash-can"></i> Delete</a
+  >
+</p>
+{% endif %} {% endblock %}

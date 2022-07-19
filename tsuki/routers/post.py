@@ -65,11 +65,11 @@ async def create_post_(request: Request, user: User = Depends(get_current_user))
                 "message": "Unable to create the post, please try again later.",
             },
         )
-    return await get_post(post_data.id, request)
+    return await get_post(post_data.id, request, user)
 
 
 @post.get("/{_id}", response_class=HTMLResponse)
-async def get_post(_id: str, request: Request):
+async def get_post(_id: str, request: Request, user: User = Depends(get_current_user)):
     post = await read_post(_id)
     if not post:
         return templates.TemplateResponse(
@@ -80,12 +80,31 @@ async def get_post(_id: str, request: Request):
                 "message": "Post not found or doesn't exist.",
             },
         )
+    if user and user.username == post.username:
+        return templates.TemplateResponse(
+            "get_post.html",
+            {"request": request, "post": post, "_self": True},
+        )
     return templates.TemplateResponse(
         "get_post.html",
-        {
-            "request": request,
-            "user": post.username,
-            "body": post.body,
-            "timestamp": post.created_at,
-        },
+        {"request": request, "post": post},
+    )
+
+
+@post.get("/{_id}/delete")
+async def delete_post_(
+    _id: str, request: Request, user: User = Depends(get_current_user)
+):
+    if not user:
+        return templates.TemplateResponse(
+            "error.html",
+            {
+                "request": request,
+                "error": "401 Unauthorized",
+                "message": "User not logged in.",
+            },
+        )
+    await delete_post(_id)
+    return templates.TemplateResponse(
+        "response.html", {"request": request, "message": "Post deleted."}
     )

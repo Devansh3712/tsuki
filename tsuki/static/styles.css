@@ -66,6 +66,14 @@ u {
     margin-left: 160px;
 }
 
+.post-settings {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    border-top: 1px solid rgb(160, 160, 160);
+}
+
 .row:after {
     display: table;
     clear: both;
@@ -75,7 +83,7 @@ u {
     padding-bottom: 15px;
     font-size: 14px;
     font-weight: bold;
-    border-bottom: 2px solid rgb(160, 160, 160);;
+    border-bottom: 1px solid rgb(160, 160, 160);
 }
 
 .sidebar {
@@ -110,4 +118,9 @@ u {
 
 .user-data {
     margin-top: -10px;
+}
+
+#icon:hover {
+    color: rgb(160, 160, 160) !important;
+    cursor: pointer !important;
 }

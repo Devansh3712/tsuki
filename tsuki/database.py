@@ -296,6 +296,19 @@ async def read_feed_posts(username: str) -> List[PostResponse]:
         return []
 
 
+async def delete_post(_id: str) -> bool:
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    try:
+        async with connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute("DELETE FROM posts WHERE id = %s", (_id,))
+                return True
+    except:
+        return False
+
+
 async def toggle_follow(username: str, to_toggle: str):
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
