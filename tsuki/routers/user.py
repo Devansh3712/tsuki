@@ -30,11 +30,9 @@ async def get_user(request: Request, user: User = Depends(get_current_user)):
     user_data = user.dict()
     del user_data["password"]
     posts = await read_recent_posts(user.username)
+    user_data["posts"] = len(posts)
     followers = await read_followers(user.username)
     following = await read_following(user.username)
-    user_data["posts"] = len(posts)
-    user_data["followers"] = len(followers)
-    user_data["following"] = len(following)
     return templates.TemplateResponse(
         "user.html",
         {
@@ -42,6 +40,8 @@ async def get_user(request: Request, user: User = Depends(get_current_user)):
             "user_data": user_data,
             "settings": True,
             "posts": posts,
+            "followers": followers,
+            "following": following,
         },
     )
 
@@ -66,11 +66,9 @@ async def get_user_by_name(
     del user_data["email"]
     del user_data["password"]
     posts = await read_recent_posts(username)
+    user_data["posts"] = len(posts)
     followers = await read_followers(username)
     following = await read_following(username)
-    user_data["posts"] = len(posts)
-    user_data["followers"] = len(followers)
-    user_data["following"] = len(following)
     _follows = await follows(user.username, username) if user else None
     return templates.TemplateResponse(
         "user.html",
@@ -80,6 +78,8 @@ async def get_user_by_name(
             "settings": False,
             "posts": posts,
             "follows": _follows,
+            "followers": followers,
+            "following": following,
         },
     )
 

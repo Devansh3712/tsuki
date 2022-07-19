@@ -9,9 +9,18 @@ content %}
 <p>{{ post.body }}</p>
 <h4>{{ post.created_at }}</h4>
 <p class="post-settings">
-  {{ votes }} Likes
-  <br />
-  <br />
+  <a href="#" id="btn-1">{{ voters|length }} Likes</a>
+  <div id="modal-1" class="modal">
+    <div class="modal-content">
+      <span class="close-1">&times;</span>
+      <h3>Liked By</h3>
+      {% for user in voters %}
+      <p class="modal-data">
+        <a href="/user/{{ user[0] }}">@{{ user[0] }}</a>
+      </p>
+      {% endfor %}
+    </div>
+  </div>
   <a href="/post/{{ post.id }}/toggle-vote">
     {% if voted %}
     <i class="fa-solid fa-heart"></i>

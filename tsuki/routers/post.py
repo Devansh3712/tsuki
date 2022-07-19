@@ -80,7 +80,7 @@ async def get_post(_id: str, request: Request, user: User = Depends(get_current_
                 "message": "Post not found or doesn't exist.",
             },
         )
-    votes = await read_votes(_id)
+    voters = await read_votes(_id)
     _voted = await voted(user.username, _id) if user else None
     _self = True if user and (user.username == post.username) else False
     return templates.TemplateResponse(
@@ -88,9 +88,9 @@ async def get_post(_id: str, request: Request, user: User = Depends(get_current_
         {
             "request": request,
             "post": post,
-            "votes": len(votes),
             "_self": _self,
             "voted": _voted,
+            "voters": voters,
         },
     )
 

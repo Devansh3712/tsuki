@@ -8,7 +8,36 @@ content %}
     <p class="user-data">
       <b>{{ column.replace("_", " ").title() }}:</b> {{ user_data[column] }}
     </p>
-    {% endfor %}{% if not settings %}
+    {% endfor %}
+    <p class="user-data">
+      <b>Followers:</b> <a href="#" id="btn-1">{{ followers|length }}</a>
+      <div id="modal-1" class="modal">
+        <div class="modal-content">
+          <span class="close-1">&times;</span>
+          <h3>Followers</h3>
+          {% for user in followers %}
+          <p class="modal-data">
+            <a href="/user/{{ user[0] }}">@{{ user[0] }}</a>
+          </p>
+          {% endfor %}
+        </div>
+      </div>
+    </p>
+    <p class="user-data">
+      <b>Following:</b> <a href="#" id="btn-2">{{ following|length }}</a>
+      <div id="modal-2" class="modal">
+        <div class="modal-content">
+          <span class="close-2">&times;</span>
+          <h3>Following</h3>
+          {% for user in following %}
+          <p class="modal-data">
+            <a href="/user/{{ user[0] }}">@{{ user[0] }}</a>
+          </p>
+          {% endfor %}
+        </div>
+      </div>
+    </p>
+    {% if not settings %}
     <br />
     <form
       name="follow"
