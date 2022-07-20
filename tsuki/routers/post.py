@@ -83,10 +83,11 @@ async def get_post(_id: str, request: Request, user: User = Depends(get_current_
     _voted = await voted(user.username, _id) if user else None
     _self = True if user and (user.username == post.username) else False
     comments = await read_comments(_id)
-    for index in range(len(comments)):
-        comments[index] = CommentResponse(**comments[index].dict())
-        if comments[index].username == user.username:
-            comments[index].self_ = True
+    if user is not None:
+        for index in range(len(comments)):
+            comments[index] = CommentResponse(**comments[index].dict())
+            if comments[index].username == user.username:
+                comments[index].self_ = True
     return templates.TemplateResponse(
         "get_post.html",
         {
