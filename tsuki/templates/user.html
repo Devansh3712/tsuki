@@ -72,7 +72,7 @@ content %}
     <br />
     {% if posts %} {% for post in posts %}
     <a href="/post/{{ post.id }}">
-      <p>{{ post.body }}</p>
+      <p class="content">{{ post.body }}</p>
       <p class="separator">{{ post.created_at }}</p>
     </a>
     {% endfor %} {% else %}

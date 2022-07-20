@@ -91,6 +91,11 @@ u {
     width: 50%;
 }
 
+.content {
+    overflow-wrap: break-word;
+    padding-right: 10px;
+}
+
 .main {
     margin-left: 160px;
 }
