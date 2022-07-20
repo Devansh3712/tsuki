@@ -1,10 +1,11 @@
+import os
 from typing import Any, List, Mapping
 
 import psycopg
 from psycopg import sql
 
 from tsuki.config import secrets
-from tsuki.routers.models import Post, PostResponse, User
+from tsuki.routers.models import Comment, Post, PostResponse, User
 
 
 async def initdb():
@@ -13,56 +14,9 @@ async def initdb():
     )
     async with connection:
         async with connection.cursor() as cursor:
-            await cursor.execute(
-                """CREATE TABLE IF NOT EXISTS t_users (
-                    email       VARCHAR(320)    UNIQUE NOT NULL,
-                    username    VARCHAR(32)     PRIMARY KEY,
-                    password    VARCHAR(64)     NOT NULL,
-                    verified    BOOL            NOT NULL,
-                    created_at  TIMESTAMPTZ     NOT NULL
-                )"""
-            )
-            await cursor.execute(
-                """CREATE TABLE IF NOT EXISTS shorturl (
-                    token       VARCHAR(320)    PRIMARY KEY,
-                    id          CHAR(32)        UNIQUE NOT NULL
-                )"""
-            )
-            await cursor.execute(
-                """CREATE TABLE IF NOT EXISTS posts (
-                    username    VARCHAR(32)     NOT NULL,
-                    id          CHAR(32)        PRIMARY KEY,
-                    body        VARCHAR(320)    NOT NULL,
-                    created_at  TIMESTAMPTZ     NOT NULL,
-                    CONSTRAINT fk_username
-                        FOREIGN KEY(username)
-                            REFERENCES t_users(username)
-                            ON DELETE CASCADE
-                            ON UPDATE CASCADE
-                )"""
-            )
-            await cursor.execute(
-                """CREATE TABLE IF NOT EXISTS follows (
-                    username    VARCHAR(32)     NOT NULL,
-                    following   VARCHAR(32)     NOT NULL,
-                    CONSTRAINT fk_username
-                        FOREIGN KEY(username)
-                            REFERENCES t_users(username)
-                            ON DELETE CASCADE
-                            ON UPDATE CASCADE
-                )"""
-            )
-            await cursor.execute(
-                """CREATE TABLE IF NOT EXISTS votes (
-                    id          CHAR(32)    NOT NULL,
-                    username    VARCHAR(32) NOT NULL,
-                    CONSTRAINT fk_id
-                        FOREIGN KEY(id)
-                            REFERENCES posts(id)
-                            ON DELETE CASCADE
-                            ON UPDATE CASCADE
-                )"""
-            )
+            current_dir = os.path.dirname(os.path.realpath(__file__))
+            with open(os.path.join(current_dir, "resources", "init.sql")) as sql_file:
+                await cursor.execute(sql_file.read())
 
 
 # TODO:
@@ -441,3 +395,62 @@ async def read_votes(_id: str) -> List[str]:
                 return list(votes)
     except:
         []
+
+
+async def create_comment(comment: Comment) -> bool:
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    try:
+        async with connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute(
+                    """INSERT INTO comments
+                VALUES (%(post_id)s, %(id)s, %(username)s, %(body)s, %(created_at)s)""",
+                    comment.dict(),
+                )
+                return True
+    except:
+        return False
+
+
+async def read_comments(_id: str) -> List[Comment]:
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    try:
+        async with connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute(
+                    "SELECT * FROM comments WHERE post_id = %s ORDER BY created_at DESC",
+                    (_id,),
+                )
+                results = await cursor.fetchall()
+                comments = []
+                for data in results:
+                    comment = Comment(
+                        **{
+                            key: data[index]
+                            for index, key in enumerate(Comment.__fields__.keys())
+                        }
+                    )
+                    comment.created_at = comment.created_at.strftime(
+                        "%d %B %Y, %H:%M:%S"
+                    )
+                    comments.append(comment)
+                return list(comments)
+    except:
+        []
+
+
+async def delete_comment(_id: str) -> bool:
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    try:
+        async with connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute("DELETE FROM comments WHERE comment_id = %s", (_id,))
+                return True
+    except:
+        return False

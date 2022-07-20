@@ -22,3 +22,20 @@ class PostResponse(BaseModel):
     id: str
     body: str
     created_at: datetime
+
+
+class Comment(BaseModel):
+    post_id: str
+    id: str
+    username: str
+    body: str
+    created_at: datetime
+
+
+class CommentResponse(BaseModel):
+    post_id: str
+    id: str
+    username: str
+    body: str
+    created_at: str
+    self_: bool = False

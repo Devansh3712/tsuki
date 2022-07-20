@@ -1,16 +1,15 @@
 import os
-import pytz
 from datetime import datetime
 from uuid import uuid4
 
+import pytz
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from tsuki.database import *
 from tsuki.oauth import get_current_user
-from tsuki.routers.models import User, Post
-
+from tsuki.routers.models import Comment, CommentResponse, Post, User
 
 post = APIRouter(prefix="/post", tags=["Posts"])
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -83,6 +82,11 @@ async def get_post(_id: str, request: Request, user: User = Depends(get_current_
     voters = await read_votes(_id)
     _voted = await voted(user.username, _id) if user else None
     _self = True if user and (user.username == post.username) else False
+    comments = await read_comments(_id)
+    for index in range(len(comments)):
+        comments[index] = CommentResponse(**comments[index].dict())
+        if comments[index].username == user.username:
+            comments[index].self_ = True
     return templates.TemplateResponse(
         "get_post.html",
         {
@@ -91,6 +95,7 @@ async def get_post(_id: str, request: Request, user: User = Depends(get_current_
             "_self": _self,
             "voted": _voted,
             "voters": voters,
+            "comments": comments,
         },
     )
 
@@ -106,6 +111,16 @@ async def delete_post_(
                 "request": request,
                 "error": "401 Unauthorized",
                 "message": "User not logged in.",
+            },
+        )
+    post = await read_post(_id)
+    if post.username != user.username:
+        return templates.TemplateResponse(
+            "error.html",
+            {
+                "request": request,
+                "error": "401 Unauthorized",
+                "message": "Cannot perform this task.",
             },
         )
     await delete_post(_id)
@@ -128,4 +143,53 @@ async def toggle_vote_(
             },
         )
     await toggle_vote(user.username, _id)
+    return await get_post(_id, request, user)
+
+
+@post.post("/{_id}/comment")
+async def create_comment_(
+    _id: str, request: Request, user: User = Depends(get_current_user)
+):
+    if not user:
+        return templates.TemplateResponse(
+            "error.html",
+            {
+                "request": request,
+                "error": "401 Unauthorized",
+                "message": "User not logged in.",
+            },
+        )
+    form = dict(await request.form())
+    form["username"] = user.username
+    form["created_at"] = datetime.now()
+    form["post_id"] = _id
+    form["id"] = uuid4().hex
+    comment = Comment(**form)
+    result = await create_comment(comment)
+    if not result:
+        return templates.TemplateResponse(
+            "error.html",
+            {
+                "request": request,
+                "error": "400 Bad Request",
+                "message": "Unable to add the comment, please try again later.",
+            },
+        )
+    return await get_post(_id, request, user)
+
+
+@post.get("/{_id}/comment/delete/")
+async def delete_comment_(
+    _id: str, comm_id: str, request: Request, user: User = Depends(get_current_user)
+):
+    if not user:
+        return templates.TemplateResponse(
+            "error.html",
+            {
+                "request": request,
+                "error": "401 Unauthorized",
+                "message": "User not logged in.",
+            },
+        )
+    await delete_comment(comm_id)
     return await get_post(_id, request, user)

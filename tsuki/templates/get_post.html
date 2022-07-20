@@ -10,28 +10,69 @@ content %}
 <h4>{{ post.created_at }}</h4>
 <p class="post-settings">
   <a href="#" id="btn-1">{{ voters|length }} Likes</a>
-  <div id="modal-1" class="modal">
-    <div class="modal-content">
-      <span class="close-1">&times;</span>
-      <h3>Liked By</h3>
-      {% for user in voters %}
-      <p class="modal-data">
-        <a href="/user/{{ user[0] }}">@{{ user[0] }}</a>
-      </p>
-      {% endfor %}
-    </div>
+  &nbsp; {{ comments|length }} Comments
+</p>
+<div id="modal-1" class="modal">
+  <div class="modal-content">
+    <span class="close-1">&times;</span>
+    <h3>Liked By</h3>
+    {% for user in voters %}
+    <p class="modal-data">
+      <a href="/user/{{ user[0] }}">@{{ user[0] }}</a>
+    </p>
+    {% endfor %}
   </div>
-  <a href="/post/{{ post.id }}/toggle-vote">
-    {% if voted %}
-    <i class="fa-solid fa-heart"></i>
-    {% else %}
-    <i class="fa-regular fa-heart"></i>
-    {% endif %} Like
-  </a>
-  {% if _self %} &nbsp;
-  <a href="/post/{{ post.id }}/delete"
+</div>
+<a href="/post/{{ post.id }}/toggle-vote">
+  {% if voted %}
+  <i class="fa-solid fa-heart"></i>
+  {% else %}
+  <i class="fa-regular fa-heart"></i>
+  {% endif %} Like
+</a>
+{% if _self %} &nbsp;
+<a href="/post/{{ post.id }}/delete"
+  ><i class="fa-regular fa-trash-can"></i> Delete</a
+>
+{% endif %}
+<br />
+<h2 style="padding-top: 10px">Comments</h2>
+<form name="post" action="/post/{{ post.id }}/comment" method="POST">
+  <textarea
+    name="body"
+    style="
+      background-color: rgb(15, 15, 15);
+      color: white;
+      font-family: inherit;
+      font-size: 16px;
+      resize: none;
+      height: 50px;
+      width: 500px;
+      outline: none;
+      display: inline-block;
+      vertical-align: top;
+      box-sizing: border-box;
+      border: 2px solid rgb(130, 130, 130);
+      border-radius: 15px;
+      padding: 10px;
+    "
+    maxlength="320"
+  ></textarea>
+  <button type="submit" style="margin-top: 10px; margin-left: 10px">
+    Submit
+  </button>
+</form>
+<br />
+{% if comments %} {% for comment in comments %}
+<p>{{ comment.body }}</p>
+<p class="separator">
+  <a href="/user/{{ comment.username }}">@{{ comment.username }}</a> &nbsp;{% if
+  comment.self_ %}
+  <a href="/post/{{ post.id }}/comment/delete?comm_id={{ comment.id }}"
     ><i class="fa-regular fa-trash-can"></i> Delete</a
   >
-  {% endif %}
+  {% endif %} {% endfor %}
 </p>
-{% endblock %}
+{% else %}
+<p style="color: rgb(130, 130, 130)">No comments found.</p>
+{% endif %} {% endblock %}

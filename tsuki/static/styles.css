@@ -54,7 +54,6 @@ p {
 }
 
 u {
-    color: white;
     text-underline-offset: 1px;
 }
 
@@ -71,7 +70,7 @@ u {
     font-size: 28px;
     font-weight: bold;
 }
-  
+
 .close-1:hover,
 .close-1:focus {
     color: rgb(160, 160, 160);
