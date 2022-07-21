@@ -26,7 +26,18 @@
   <br />
   <label for="password">Password</label>
   <br />
-  <input name="password" type="password" maxlength="32" required />
+  <input
+    name="password"
+    id="password"
+    type="password"
+    maxlength="32"
+    required
+  /><i
+    class="fa-solid fa-eye"
+    style="margin-left: 10px; cursor: pointer"
+    id="togglePassword"
+  ></i>
+  <br />
   <br />
   <button type="submit">{{ type.title() }}</button>
 </form>

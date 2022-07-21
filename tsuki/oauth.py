@@ -9,6 +9,15 @@ from tsuki.routers.models import User
 
 
 def create_access_token(username: str):
+    """Create a JWT for user authorization, valid until the user
+    logs out.
+
+    Args:
+        username (str): User to authorize.
+
+    Returns:
+        Any: Authorization JWT.
+    """
     token = jwt.encode(
         {"user": username, "iat": datetime.now(), "iss": secrets.ISSUER},
         secrets.SECRET_KEY,
@@ -18,6 +27,15 @@ def create_access_token(username: str):
 
 
 async def get_current_user(request: Request) -> User | None:
+    """Get the current logged in user using the Authorization token.
+
+    Args:
+        request (Request): FastAPI request.
+
+    Returns:
+        User | None: Returns the username of authorized user if any
+        else None.
+    """
     try:
         token: str = request.session["Authorization"]
         payload = jwt.decode(token, secrets.SECRET_KEY, algorithms=["HS256"])

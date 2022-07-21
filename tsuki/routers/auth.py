@@ -1,12 +1,12 @@
 import base64
 import os
-import pytz
 from datetime import datetime, timedelta
 from email.mime.text import MIMEText
 from uuid import uuid4
 
 import fastapi
 import google.auth.transport.requests as google_auth
+import pytz
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -22,8 +22,7 @@ from tsuki.oauth import *
 from tsuki.routers.models import User
 from tsuki.routers.user import get_user
 
-
-auth = APIRouter(prefix="/auth", tags=["Authorization"])
+auth = APIRouter(prefix="/auth")
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 templates = Jinja2Templates(directory=os.path.join(parent_dir, "templates"))
 password_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -35,6 +34,15 @@ class Login(BaseModel):
 
 
 async def create_verification_id(username: str) -> str:
+    """Create an account verification JWT and return a UUID
+    corresponding to it.
+
+    Args:
+        username (str): User to be verified.
+
+    Returns:
+        str: Generated UUID
+    """
     token = jwt.encode(
         {
             "user": username,
@@ -79,6 +87,7 @@ async def signup(request: fastapi.Request):
                 "message": "Unable to create user, please try again later.",
             },
         )
+    # Login the user and send a verification mail
     request.session["Authorization"] = create_access_token(user.username)
     return await send_verification_mail(request, user, "Account created successfully.")
 
@@ -106,7 +115,7 @@ async def login(request: fastapi.Request):
                 "message": "Incorrect password.",
             },
         )
-    # Log in the new user
+    # Set cookie for authorization token
     access_token = create_access_token(user.username)
     request.session["Authorization"] = access_token
     return await get_user(request, user_data)

@@ -8,8 +8,7 @@ from tsuki.database import *
 from tsuki.oauth import get_current_user
 from tsuki.routers.models import User
 
-
-search = APIRouter(prefix="/search", tags=["Search"])
+search = APIRouter(prefix="/search")
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 templates = Jinja2Templates(directory=os.path.join(parent_dir, "templates"))
 

@@ -33,3 +33,14 @@ window.onclick = function(event) {
         modal2.style.display = "none";
     }
 }
+
+const togglePassword = document.querySelector('#togglePassword')
+const password = document.querySelector('#password')
+
+if (togglePassword != null && password != null) {
+    togglePassword.addEventListener("click", function (e) {
+        const type = password.getAttribute('type') === "password" ? "text" : "password";
+        password.setAttribute("type", type);
+        this.classList.toggle("fa-eye-slash");
+    });
+}

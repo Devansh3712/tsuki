@@ -8,6 +8,12 @@ content %}
   <p>{{ post.body }}</p>
   <p class="separator">{{ post.created_at }}</p>
 </a>
-{% endfor %} {% else %}
+{% endfor %}
+<h3 style="padding-top: 10px">
+  <a href="/feed?more=True"
+    ><i class="fa-solid fa-circle-chevron-down"></i> More</a
+  >
+</h3>
+{% else %}
 <p style="color: rgb(130, 130, 130)">No posts found.</p>
 {% endif %} {% endblock %}

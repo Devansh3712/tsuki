@@ -202,7 +202,23 @@ async def read_post(_id: str) -> PostResponse | None:
         return None
 
 
-async def read_recent_posts(username: str) -> List[PostResponse]:
+async def read_post_count(username: str) -> int:
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    try:
+        async with connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute(
+                    "SELECT COUNT(*) FROM posts WHERE username = %s", (username,)
+                )
+                result = await cursor.fetchone()
+                return result[0]
+    except:
+        return 0
+
+
+async def read_recent_posts(username: str, limit: int = 5) -> List[PostResponse]:
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -212,8 +228,8 @@ async def read_recent_posts(username: str) -> List[PostResponse]:
                 await cursor.execute(
                     """SELECT * FROM posts WHERE username = %s
                 ORDER BY created_at DESC
-                LIMIT 5""",
-                    (username,),
+                LIMIT %s""",
+                    (username, limit),
                 )
                 results = await cursor.fetchall()
                 posts = []
@@ -231,7 +247,7 @@ async def read_recent_posts(username: str) -> List[PostResponse]:
         return []
 
 
-async def read_feed_posts(username: str) -> List[PostResponse]:
+async def read_feed_posts(username: str, limit: int = 10) -> List[PostResponse]:
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -242,8 +258,8 @@ async def read_feed_posts(username: str) -> List[PostResponse]:
                     """SELECT * FROM posts WHERE username IN
                 (SELECT following FROM follows WHERE username = %s)
                 ORDER BY created_at DESC
-                LIMIT 10""",
-                    (username,),
+                LIMIT %s""",
+                    (username, limit),
                 )
                 results = await cursor.fetchall()
                 posts = []
@@ -414,7 +430,7 @@ async def create_comment(comment: Comment) -> bool:
         return False
 
 
-async def read_comments(_id: str) -> List[Comment]:
+async def read_comments(_id: str, limit: int = 10) -> List[Comment]:
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -450,7 +466,9 @@ async def delete_comment(_id: str) -> bool:
     try:
         async with connection:
             async with connection.cursor() as cursor:
-                await cursor.execute("DELETE FROM comments WHERE comment_id = %s", (_id,))
+                await cursor.execute(
+                    "DELETE FROM comments WHERE comment_id = %s", (_id,)
+                )
                 return True
     except:
         return False

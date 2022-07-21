@@ -1,4 +1,5 @@
 import os
+
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
@@ -13,9 +14,9 @@ from tsuki.routers.feed import feed
 from tsuki.routers.models import User
 from tsuki.routers.post import post
 from tsuki.routers.search import search
-from tsuki.routers.user import user, get_current_user
+from tsuki.routers.user import get_current_user, user
 
-app = FastAPI(title="Tsuki")
+app = FastAPI(docs_url=None, redoc_url=None)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

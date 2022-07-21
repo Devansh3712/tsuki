@@ -8,7 +8,18 @@
   {% if type == "username" %}
   <input name="username" type="text" maxlength="32" required />
   {% else %}
-  <input name="password" type="password" maxlength="32" required />
+  <input
+    name="password"
+    id="password"
+    type="password"
+    maxlength="32"
+    required
+  /><i
+    class="fa-solid fa-eye"
+    style="margin-left: 10px; cursor: pointer"
+    id="togglePassword"
+  ></i>
+  <br />
   {% endif %}
   <br />
   <button type="submit">Submit</button>

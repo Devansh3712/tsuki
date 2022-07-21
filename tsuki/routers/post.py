@@ -11,7 +11,7 @@ from tsuki.database import *
 from tsuki.oauth import get_current_user
 from tsuki.routers.models import Comment, CommentResponse, Post, User
 
-post = APIRouter(prefix="/post", tags=["Posts"])
+post = APIRouter(prefix="/post")
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 templates = Jinja2Templates(directory=os.path.join(parent_dir, "templates"))
 
@@ -179,7 +179,7 @@ async def create_comment_(
     return await get_post(_id, request, user)
 
 
-@post.get("/{_id}/comment/delete/")
+@post.get("/{_id}/comment/delete")
 async def delete_comment_(
     _id: str, comm_id: str, request: Request, user: User = Depends(get_current_user)
 ):

@@ -9,15 +9,18 @@ from tsuki.database import *
 from tsuki.oauth import *
 from tsuki.routers.models import User
 
-
-user = APIRouter(prefix="/user", tags=["Users"])
+user = APIRouter(prefix="/user")
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 templates = Jinja2Templates(directory=os.path.join(parent_dir, "templates"))
 password_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
+limit = 5
 
 
 @user.get("/", response_class=HTMLResponse)
-async def get_user(request: Request, user: User = Depends(get_current_user)):
+async def get_user(
+    request: Request, user: User = Depends(get_current_user), more: bool = False
+):
+    global limit
     if not user:
         return templates.TemplateResponse(
             "error.html",
@@ -29,27 +32,32 @@ async def get_user(request: Request, user: User = Depends(get_current_user)):
         )
     user_data = user.dict()
     del user_data["password"]
-    posts = await read_recent_posts(user.username)
-    user_data["posts"] = len(posts)
-    followers = await read_followers(user.username)
-    following = await read_following(user.username)
+    if more:
+        limit += 5
+    else:
+        limit = 5
+    user_data["posts"] = await read_post_count(user.username)
     return templates.TemplateResponse(
         "user.html",
         {
             "request": request,
             "user_data": user_data,
             "settings": True,
-            "posts": posts,
-            "followers": followers,
-            "following": following,
+            "posts": await read_recent_posts(user.username, limit),
+            "followers": await read_followers(user.username),
+            "following": await read_following(user.username),
         },
     )
 
 
 @user.get("/{username}", response_class=HTMLResponse)
 async def get_user_by_name(
-    username: str, request: Request, user: User = Depends(get_current_user)
+    username: str,
+    request: Request,
+    user: User = Depends(get_current_user),
+    more: bool = False,
 ):
+    global limit
     if user and username == user.username:
         return await get_user(request, user)
     _user = await read_user(username)
@@ -65,21 +73,22 @@ async def get_user_by_name(
     user_data = _user.dict()
     del user_data["email"]
     del user_data["password"]
-    posts = await read_recent_posts(username)
-    user_data["posts"] = len(posts)
-    followers = await read_followers(username)
-    following = await read_following(username)
-    _follows = await follows(user.username, username) if user else None
+    if more:
+        limit += 5
+    else:
+        limit = 5
+    user_data["posts"] = await read_post_count(username)
     return templates.TemplateResponse(
         "user.html",
         {
             "request": request,
             "user_data": user_data,
             "settings": False,
-            "posts": posts,
-            "follows": _follows,
-            "followers": followers,
-            "following": following,
+            "posts": await read_recent_posts(username, limit),
+            # Check if the logged in user follows the searched user
+            "follows": await follows(user.username, username) if user else None,
+            "followers": await read_followers(username),
+            "following": await read_following(username),
         },
     )
 
@@ -117,7 +126,16 @@ async def update_user_password(
             },
         )
     password = password_ctx.hash(form["password"])
-    await update_user(user.username, {"password": password})
+    result = await update_user(user.username, {"password": password})
+    if not result:
+        return templates.TemplateResponse(
+            "error.html",
+            {
+                "request": request,
+                "error": "400 Bad Request",
+                "message": "Unable to change password, try again later.",
+            },
+        )
     return templates.TemplateResponse(
         "response.html",
         {"request": request, "message": "Password updated successfully."},
@@ -173,9 +191,17 @@ async def update_username(request: Request, user: User = Depends(get_current_use
                 "message": "Username not available or already taken.",
             },
         )
-    await update_user(user.username, {"username": form["username"]})
-    access_token = create_access_token(form["username"])
-    request.session["Authorization"] = access_token
+    result = await update_user(user.username, {"username": form["username"]})
+    if not result:
+        return templates.TemplateResponse(
+            "error.html",
+            {
+                "request": request,
+                "error": "400 Bad Request",
+                "message": "Unable to change username, try again later.",
+            },
+        )
+    request.session["Authorization"] = create_access_token(form["username"])
     return templates.TemplateResponse(
         "response.html",
         {"request": request, "message": "Username updated successfully."},
@@ -217,7 +243,16 @@ async def delete_user_(request: Request, user: User = Depends(get_current_user))
                 "message": "Incorrect password.",
             },
         )
-    await delete_user(user.username)
+    result = await delete_user(user.username)
+    if not result:
+        return templates.TemplateResponse(
+            "error.html",
+            {
+                "request": request,
+                "error": "400 Bad Request",
+                "message": "Unable to delete account, try again later.",
+            },
+        )
     del request.session["Authorization"]
     return templates.TemplateResponse(
         "response.html",
