@@ -438,8 +438,10 @@ async def read_comments(_id: str, limit: int = 10) -> List[Comment]:
         async with connection:
             async with connection.cursor() as cursor:
                 await cursor.execute(
-                    "SELECT * FROM comments WHERE post_id = %s ORDER BY created_at DESC",
-                    (_id,),
+                    """SELECT * FROM comments WHERE post_id = %s
+                    ORDER BY created_at DESC
+                    LIMIT %s""",
+                    (_id, limit),
                 )
                 results = await cursor.fetchall()
                 comments = []
@@ -454,7 +456,7 @@ async def read_comments(_id: str, limit: int = 10) -> List[Comment]:
                         "%d %B %Y, %H:%M:%S"
                     )
                     comments.append(comment)
-                return list(comments)
+                return comments
     except:
         []
 

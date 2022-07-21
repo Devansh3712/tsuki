@@ -74,6 +74,11 @@ content %}
   >
   {% endif %} {% endfor %}
 </p>
+<h3 style="padding-top: 10px">
+  <a href="/post/{{ post.id }}?more=True"
+    ><i class="fa-solid fa-circle-chevron-down"></i> More</a
+  >
+</h3>
 {% else %}
 <p style="color: rgb(130, 130, 130)">No comments found.</p>
 {% endif %} {% endblock %}

@@ -14,6 +14,7 @@ from tsuki.routers.models import Comment, CommentResponse, Post, User
 post = APIRouter(prefix="/post")
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 templates = Jinja2Templates(directory=os.path.join(parent_dir, "templates"))
+limit = 5
 
 
 @post.get("/", response_class=HTMLResponse)
@@ -68,7 +69,13 @@ async def create_post_(request: Request, user: User = Depends(get_current_user))
 
 
 @post.get("/{_id}", response_class=HTMLResponse)
-async def get_post(_id: str, request: Request, user: User = Depends(get_current_user)):
+async def get_post(
+    _id: str,
+    request: Request,
+    user: User = Depends(get_current_user),
+    more: bool = False,
+):
+    global limit
     post = await read_post(_id)
     if not post:
         return templates.TemplateResponse(
@@ -79,10 +86,11 @@ async def get_post(_id: str, request: Request, user: User = Depends(get_current_
                 "message": "Post not found or doesn't exist.",
             },
         )
-    voters = await read_votes(_id)
-    _voted = await voted(user.username, _id) if user else None
-    _self = True if user and (user.username == post.username) else False
-    comments = await read_comments(_id)
+    if more:
+        limit += 5
+    else:
+        limit = 5
+    comments = await read_comments(_id, limit)
     if user is not None:
         for index in range(len(comments)):
             comments[index] = CommentResponse(**comments[index].dict())
@@ -93,9 +101,9 @@ async def get_post(_id: str, request: Request, user: User = Depends(get_current_
         {
             "request": request,
             "post": post,
-            "_self": _self,
-            "voted": _voted,
-            "voters": voters,
+            "_self": True if user and (user.username == post.username) else False,
+            "voted": await voted(user.username, _id) if user else None,
+            "voters": await read_votes(_id),
             "comments": comments,
         },
     )
