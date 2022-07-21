@@ -20,18 +20,41 @@ async def search_user_html(request: Request):
 
 
 @search.post("/", response_class=HTMLResponse)
-async def search_user(
-    request: Request, user: User = Depends(get_current_user), more: bool = False
-):
+async def search_user(request: Request, user: User = Depends(get_current_user)):
+    form = await request.form()
+    # Set a search cookie for use in toggle follow function
+    if form.get("search"):
+        request.session["search"] = form["search"]
+    users = await read_users(request.session["search"])
+    if not users:
+        return templates.TemplateResponse("search.html", {"request": request})
+    for index, _user in enumerate(users):
+        user_data = _user.dict()
+        del user_data["email"]
+        del user_data["password"]
+        followers = await read_followers(user_data["username"])
+        following = await read_following(user_data["username"])
+        user_data["posts"] = await read_post_count(user_data["username"])
+        user_data["followers"] = len(followers)
+        user_data["following"] = len(following)
+        user_data["follows"] = (
+            await follows(user.username, user_data["username"]) if user else None
+        )
+        users[index] = user_data
+    return templates.TemplateResponse(
+        "search.html", {"request": request, "users": users}
+    )
+
+
+# A different GET endpoint to load more users.
+@search.get("/load-more", response_class=HTMLResponse)
+async def load_more_user(request: Request, user: User = Depends(get_current_user)):
     global limit
     form = await request.form()
     # Set a search cookie for use in toggle follow function
     if form.get("search"):
         request.session["search"] = form["search"]
-    if more:
-        limit += 5
-    else:
-        limit = 10
+    limit += 5
     users = await read_users(request.session["search"], limit)
     if not users:
         return templates.TemplateResponse("search.html", {"request": request})

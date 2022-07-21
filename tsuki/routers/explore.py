@@ -43,6 +43,16 @@ async def get_explore_feed(
 
 
 async def recommend_posts(username: str, limit: int) -> List[PostResponse]:
+    """Get recommended posts for the current user based on their
+    likes.
+
+    Args:
+        username (str): User to fetch posts for.
+        limit (int): Limit of posts to fetch.
+
+    Returns:
+        List[PostResponse]: List of posts.
+    """
     liked_posts = await read_liked_posts(username)
     if not liked_posts:
         return []
