@@ -48,6 +48,8 @@ async def recommend_posts(username: str, limit: int) -> List[PostResponse]:
         return []
     # Get recent 1000 posts made
     all_recent_posts = await read_explore_posts(username)
+    if not all_recent_posts:
+        return []
     user_df = pandas.DataFrame(liked_posts, columns=["id", "body"])
     post_df = pandas.DataFrame(all_recent_posts, columns=["id", "body"])
     # Transform the body column in the vector form to
