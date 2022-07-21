@@ -11,6 +11,7 @@ from tsuki.routers.models import User
 search = APIRouter(prefix="/search")
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 templates = Jinja2Templates(directory=os.path.join(parent_dir, "templates"))
+limit = 10
 
 
 @search.get("/", response_class=HTMLResponse)
@@ -19,22 +20,28 @@ async def search_user_html(request: Request):
 
 
 @search.post("/", response_class=HTMLResponse)
-async def search_user(request: Request, user: User = Depends(get_current_user)):
+async def search_user(
+    request: Request, user: User = Depends(get_current_user), more: bool = False
+):
+    global limit
     form = await request.form()
     # Set a search cookie for use in toggle follow function
     if form.get("search"):
         request.session["search"] = form["search"]
-    users = await read_users(request.session["search"])
+    if more:
+        limit += 5
+    else:
+        limit = 10
+    users = await read_users(request.session["search"], limit)
     if not users:
         return templates.TemplateResponse("search.html", {"request": request})
     for index, _user in enumerate(users):
         user_data = _user.dict()
         del user_data["email"]
         del user_data["password"]
-        posts = await read_recent_posts(user_data["username"])
         followers = await read_followers(user_data["username"])
         following = await read_following(user_data["username"])
-        user_data["posts"] = len(posts)
+        user_data["posts"] = await read_post_count(user_data["username"])
         user_data["followers"] = len(followers)
         user_data["following"] = len(following)
         user_data["follows"] = (

@@ -31,6 +31,12 @@ content %}
   {{ user['posts'] }} posts &nbsp; {{ user['followers'] }} followers &nbsp; {{
   user['following'] }} following
 </p>
-{% endfor %} {% else %}
+{% endfor %}
+<h3 style="padding-top: 10px">
+  <a href="/search?more=True"
+    ><i class="fa-solid fa-circle-chevron-down"></i> More</a
+  >
+</h3>
+{% else %}
 <p style="color: rgb(130, 130, 130)">No users found.</p>
 {% endif %} {% endblock %}

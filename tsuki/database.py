@@ -99,7 +99,7 @@ async def read_user(username: str) -> User | None:
         return None
 
 
-async def read_users(username: str) -> List[User]:
+async def read_users(username: str, limit: int = 10) -> List[User]:
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -109,8 +109,8 @@ async def read_users(username: str) -> List[User]:
                 await cursor.execute(
                     """SELECT * FROM t_users WHERE username LIKE %s
                     ORDER BY username
-                    LIMIT 10""",
-                    ("%" + username + "%",),
+                    LIMIT %s""",
+                    ("%" + username + "%", limit),
                 )
                 results = await cursor.fetchall()
                 users = []

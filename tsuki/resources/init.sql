@@ -30,6 +30,11 @@ CREATE TABLE IF NOT EXISTS follows (
         FOREIGN KEY(username)
             REFERENCES t_users(username)
             ON DELETE CASCADE
+            ON UPDATE CASCADE,
+    CONSTRAINT fk_following
+        FOREIGN KEY(following)
+            REFERENCES t_users(username)
+            ON DELETE CASCADE
             ON UPDATE CASCADE
 );
 
