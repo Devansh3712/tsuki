@@ -39,7 +39,7 @@ const password = document.querySelector('#password')
 
 if (togglePassword != null && password != null) {
     togglePassword.addEventListener("click", function (e) {
-        const type = password.getAttribute('type') === "password" ? "text" : "password";
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
         password.setAttribute("type", type);
         this.classList.toggle("fa-eye-slash");
     });
