@@ -1,5 +1,5 @@
 import os
-from typing import Any, List, Mapping
+from typing import Any, List, Mapping, Tuple
 
 import psycopg
 from psycopg import sql
@@ -275,6 +275,45 @@ async def read_feed_posts(username: str, limit: int = 10) -> List[PostResponse]:
                 return posts
     except:
         return []
+
+
+async def read_explore_posts(username: str) -> List[Tuple[str, ...]]:
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    try:
+        async with connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute(
+                    """SELECT id, body FROM posts
+                    WHERE username != %s
+                    ORDER BY created_at desc
+                    LIMIT 1000""",
+                    (username,),
+                )
+                posts = await cursor.fetchall()
+                return list(posts)
+    except:
+        []
+
+
+async def read_liked_posts(username: str) -> List[Tuple[str, ...]]:
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    try:
+        async with connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute(
+                    """SELECT id, body FROM posts WHERE id IN
+                    (SELECT id FROM votes WHERE username = %s)
+                    LIMIT 100""",
+                    (username,),
+                )
+                posts = await cursor.fetchall()
+                return list(posts)
+    except:
+        []
 
 
 async def delete_post(_id: str) -> bool:

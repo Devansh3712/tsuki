@@ -1,0 +1,20 @@
+{% extends "base.html" %} {% block title %}Tsuki - Explore{% endblock %} {%
+block content %}
+<h2>Explore</h2>
+<p>Find posts based on your likes.</p>
+<br />
+{% if posts %} {% for post in posts %}
+<h3><a href="/user/{{ post.username }}">@{{ post.username }}</a></h3>
+<a href="/post/{{ post.id }}">
+  <p>{{ post.body }}</p>
+  <p class="separator">{{ post.created_at }}</p>
+</a>
+{% endfor %}
+<h3 style="padding-top: 10px">
+  <a href="/feed?more=True"
+    ><i class="fa-solid fa-circle-chevron-down"></i> More</a
+  >
+</h3>
+{% else %}
+<p style="color: rgb(130, 130, 130)">No posts found.</p>
+{% endif %} {% endblock %}
