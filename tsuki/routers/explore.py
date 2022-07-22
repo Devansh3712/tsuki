@@ -9,8 +9,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 
 from tsuki.database import *
+from tsuki.models import PostResponse, User
 from tsuki.oauth import get_current_user
-from tsuki.routers.models import PostResponse, User
 
 explore = APIRouter(prefix="/explore")
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -53,6 +53,7 @@ async def recommend_posts(username: str, limit: int) -> List[PostResponse]:
     Returns:
         List[PostResponse]: List of posts.
     """
+    # Get recent 100 liked posts of user
     liked_posts = await read_liked_posts(username)
     if not liked_posts:
         return []

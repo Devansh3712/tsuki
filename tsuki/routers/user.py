@@ -6,8 +6,8 @@ from fastapi.templating import Jinja2Templates
 from passlib.context import CryptContext
 
 from tsuki.database import *
+from tsuki.models import User
 from tsuki.oauth import *
-from tsuki.routers.models import User
 
 user = APIRouter(prefix="/user")
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

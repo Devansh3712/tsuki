@@ -18,8 +18,8 @@ from pydantic import BaseModel
 
 from tsuki.config import secrets
 from tsuki.database import *
+from tsuki.models import User
 from tsuki.oauth import *
-from tsuki.routers.models import User
 from tsuki.routers.user import get_user
 
 auth = APIRouter(prefix="/auth")

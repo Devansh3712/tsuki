@@ -1,7 +1,6 @@
 import os
 
-from fastapi import Depends, FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Depends, FastAPI, Request, status
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -9,22 +8,15 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from tsuki.config import secrets
 from tsuki.database import initdb
+from tsuki.models import User
 from tsuki.routers.auth import auth
 from tsuki.routers.explore import explore
 from tsuki.routers.feed import feed
-from tsuki.routers.models import User
 from tsuki.routers.post import post
 from tsuki.routers.search import search
 from tsuki.routers.user import get_current_user, user
 
 app = FastAPI(docs_url=None, redoc_url=None)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 app.add_middleware(SessionMiddleware, secret_key=secrets.SECRET_KEY)
 app.mount(
     "/static", StaticFiles(directory=os.path.join("tsuki", "static")), name="static"
@@ -41,6 +33,42 @@ templates = Jinja2Templates(directory=os.path.join("tsuki", "templates"))
 @app.on_event("startup")
 async def startup():
     await initdb()
+
+
+@app.exception_handler(status.HTTP_400_BAD_REQUEST)
+async def page_not_found(request: Request, exception: Exception):
+    return templates.TemplateResponse(
+        "error.html",
+        {
+            "request": request,
+            "error": "400 Bad Request",
+            "message": "The server was unable to process the request, try again later.",
+        },
+    )
+
+
+@app.exception_handler(status.HTTP_404_NOT_FOUND)
+async def page_not_found(request: Request, exception: Exception):
+    return templates.TemplateResponse(
+        "error.html",
+        {
+            "request": request,
+            "error": "404 Not Found",
+            "message": "The requested endpoint was not found.",
+        },
+    )
+
+
+@app.exception_handler(status.HTTP_500_INTERNAL_SERVER_ERROR)
+async def internal_server_error(request: Request, exception: Exception):
+    return templates.TemplateResponse(
+        "error.html",
+        {
+            "request": request,
+            "error": "500 Internal Server Error",
+            "message": "An unexpected error occured, try again later.",
+        },
+    )
 
 
 @app.get("/", response_class=HTMLResponse)

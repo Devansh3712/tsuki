@@ -5,7 +5,7 @@ from jose import jwt
 
 from tsuki.config import secrets
 from tsuki.database import *
-from tsuki.routers.models import User
+from tsuki.models import User
 
 
 def create_access_token(username: str):

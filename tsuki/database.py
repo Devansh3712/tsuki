@@ -5,7 +5,7 @@ import psycopg
 from psycopg import sql
 
 from tsuki.config import secrets
-from tsuki.routers.models import Comment, Post, PostResponse, User
+from tsuki.models import Comment, Post, PostResponse, User
 
 
 async def initdb():

@@ -8,8 +8,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from tsuki.database import *
+from tsuki.models import Comment, CommentResponse, Post, User
 from tsuki.oauth import get_current_user
-from tsuki.routers.models import Comment, CommentResponse, Post, User
 
 post = APIRouter(prefix="/post")
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
