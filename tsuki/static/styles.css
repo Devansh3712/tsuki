@@ -71,7 +71,7 @@ u {
 
 .avatar img {
     width: 100%;
-    height: auto;
+    height: 100%;
     border-radius: 50%;
 }
 
@@ -89,7 +89,7 @@ u {
 
 .avatar-small img {
     width: 100%;
-    height: auto;
+    height: 100%;
     border-radius: 50%;
 }
 
