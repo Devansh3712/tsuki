@@ -1,4 +1,5 @@
 import base64
+import json
 import os
 from datetime import datetime, timedelta
 from email.mime.text import MIMEText
@@ -154,6 +155,14 @@ async def send_verification_mail(
     )
     if not credentials.valid:
         credentials.refresh(google_auth.Request())
+        token_data = credentials.to_json()
+        token_json = json.loads(token_data)
+        os.environ["TOKEN"] = token_json["token"]
+        os.environ["REFRESH_TOKEN"] = token_json["refresh_token"]
+        os.environ["TOKEN_URI"] = token_json["token_uri"]
+        os.environ["CLIENT_ID"] = token_json["client_id"]
+        os.environ["CLIENT_SECRET"] = token_json["client_secret"]
+        os.environ["EXPIRY"] = token_json["expiry"]
 
     with open(os.path.join(parent_dir, "templates", "verify.html")) as infile:
         verification_template = infile.read()
