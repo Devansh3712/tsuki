@@ -6,6 +6,16 @@ CREATE TABLE IF NOT EXISTS t_users (
     created_at  TIMESTAMPTZ     NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS avatars (
+    username    VARCHAR(320)    PRIMARY KEY,
+    url         TEXT,
+    CONSTRAINT fk_username
+        FOREIGN KEY(username)
+            REFERENCES t_users(username)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS shorturl (
     token       VARCHAR(320)    PRIMARY KEY,
     id          CHAR(32)        UNIQUE NOT NULL

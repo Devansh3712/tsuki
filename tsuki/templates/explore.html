@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block title %}Tsuki - Explore{% endblock %} {%
 block content %}
 <h2>Explore</h2>
-<p>Find posts based on your likes.</p>
+<p>Find posts based on your likes. (Currently an experimental feature)</p>
 <br />
 {% if posts %} {% for post in posts %}
 <h3><a href="/user/{{ post.username }}">@{{ post.username }}</a></h3>

@@ -57,6 +57,24 @@ u {
     text-underline-offset: 1px;
 }
 
+.avatar {
+    border: 3px solid rgb(130, 130, 130);
+    border-radius: 50%;
+    width: 130px;
+    height: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 430px;
+    margin-top: -190px;
+}
+
+.avatar img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+}
+
 .close-1 {
     color: rgb(130, 130, 130);
     float: right;

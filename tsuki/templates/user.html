@@ -11,38 +11,50 @@ content %}
     {% endfor %}
     <p class="user-data">
       <b>Followers:</b> <a href="#" id="btn-1">{{ followers|length }}</a>
-      <div id="modal-1" class="modal">
-        <div class="modal-content">
-          <span class="close-1">&times;</span>
-          <h3>Followers</h3>
-          {% for user in followers %}
-          <p class="modal-data">
-            <a href="/user/{{ user[0] }}">@{{ user[0] }}</a>
-          </p>
-          {% endfor %}
-        </div>
-      </div>
     </p>
+
+    <div id="modal-1" class="modal">
+      <div class="modal-content">
+        <span class="close-1">&times;</span>
+        <h3>Followers</h3>
+        {% for user in followers %}
+        <p class="modal-data">
+          <a href="/user/{{ user[0] }}">@{{ user[0] }}</a>
+        </p>
+        {% endfor %}
+      </div>
+    </div>
+    <!-- </p> -->
     <p class="user-data">
       <b>Following:</b> <a href="#" id="btn-2">{{ following|length }}</a>
-      <div id="modal-2" class="modal">
-        <div class="modal-content">
-          <span class="close-2">&times;</span>
-          <h3>Following</h3>
-          {% for user in following %}
-          <p class="modal-data">
-            <a href="/user/{{ user[0] }}">@{{ user[0] }}</a>
-          </p>
-          {% endfor %}
-        </div>
-      </div>
     </p>
+
+    <div id="modal-2" class="modal">
+      <div class="modal-content">
+        <span class="close-2">&times;</span>
+        <h3>Following</h3>
+        {% for user in following %}
+        <p class="modal-data">
+          <a href="/user/{{ user[0] }}">@{{ user[0] }}</a>
+        </p>
+        {% endfor %}
+      </div>
+    </div>
+    <span class="avatar">
+      {% if avatar %}
+      <img src="{{ avatar }}" />
+      {% else %}
+      <img src="{{ url_for('static', path='/images/avatar.jpg') }}" />
+      {% endif %}
+    </span>
+    <!-- </p> -->
     {% if not settings %}
     <br />
     <form
       name="follow"
       action="/user/{{ user_data['username'] }}/toggle-follow/"
       method="POST"
+      style="margin-top: 40px"
     >
       {% if follows == True %}
       <button type="submit">Unfollow</button>
@@ -52,10 +64,13 @@ content %}
     </form>
     {% endif %} {% if settings %}
     <br />
-    <h2>Settings</h2>
+    <h2 style="margin-top: 60px">Settings</h2>
     {% if not user_data["verified"] %}
     <p>➜ <a href="/auth/verify">Verify account</a></p>
     {% endif %}
+    <p class="user-data">
+      ➜ <a href="/user/settings/update-avatar">Update avatar</a>
+    </p>
     <p class="user-data">
       ➜ <a href="/user/settings/update-username">Update username</a>
     </p>
@@ -75,15 +90,13 @@ content %}
       <p class="content">{{ post.body }}</p>
       <p class="separator">{{ post.created_at }}</p>
     </a>
-    {% endfor %}
-    {% if user_data["posts"] != posts|length %}
+    {% endfor %} {% if user_data["posts"] != posts|length %}
     <h3 style="padding-top: 10px">
       <a href="/user/{{ user_data['username'] }}?more=True"
         ><i class="fa-solid fa-circle-chevron-down"></i> More</a
       >
     </h3>
-    {% endif %}
-    {% else %}
+    {% endif %} {% else %}
     <p style="color: rgb(130, 130, 130)">No posts found.</p>
     {% endif %}
   </div>

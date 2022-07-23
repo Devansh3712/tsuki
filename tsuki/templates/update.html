@@ -2,12 +2,17 @@
 {% block content %}
 <h2>Update {{ type.title() }}</h2>
 <p>Update your Tsuki account {{ type }}.</p>
-<form name="update" action="/user/settings/update-{{ type }}" method="POST">
+<form
+  name="update"
+  action="/user/settings/update-{{ type }}"
+  method="POST"
+  enctype="multipart/form-data"
+>
   <label for="{{ type }}">{{ type.title() }}</label>
   <br />
   {% if type == "username" %}
   <input name="username" type="text" maxlength="32" required />
-  {% else %}
+  {% elif type == "password" %}
   <input
     name="password"
     id="password"
@@ -20,6 +25,8 @@
     id="togglePassword"
   ></i>
   <br />
+  {% else %}
+  <input name="avatar" type="file" accept="image/*" required />
   {% endif %}
   <br />
   <button type="submit">Submit</button>

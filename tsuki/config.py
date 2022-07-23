@@ -12,6 +12,7 @@ class EnvVariables(BaseSettings):
     CLIENT_ID: str
     CLIENT_SECRET: str
     EXPIRY: str
+    FREEIMAGE_API_KEY: str
 
     class Config:
         env_file = ".env"

@@ -20,7 +20,7 @@ from tsuki.config import secrets
 from tsuki.database import *
 from tsuki.models import User
 from tsuki.oauth import *
-from tsuki.routers.user import get_user
+from tsuki.routers.feed import get_user_feed
 
 auth = APIRouter(prefix="/auth")
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -118,7 +118,7 @@ async def login(request: fastapi.Request):
     # Set cookie for authorization token
     access_token = create_access_token(user.username)
     request.session["Authorization"] = access_token
-    return await get_user(request, user_data)
+    return await get_user_feed(request, user_data)
 
 
 @auth.get("/verify", response_class=HTMLResponse)

@@ -1,6 +1,8 @@
+import base64
 import os
 
-from fastapi import APIRouter, Depends, Request
+import requests
+from fastapi import APIRouter, Depends, File, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from passlib.context import CryptContext
@@ -42,6 +44,7 @@ async def get_user(
         {
             "request": request,
             "user_data": user_data,
+            "avatar": await read_avatar(user.username),
             "settings": True,
             "posts": await read_recent_posts(user.username, limit),
             "followers": await read_followers(user.username),
@@ -83,6 +86,7 @@ async def get_user_by_name(
         {
             "request": request,
             "user_data": user_data,
+            "avatar": await read_avatar(username),
             "settings": False,
             "posts": await read_recent_posts(username, limit),
             # Check if the logged in user follows the searched user
@@ -90,6 +94,41 @@ async def get_user_by_name(
             "followers": await read_followers(username),
             "following": await read_following(username),
         },
+    )
+
+
+@user.get("/settings/update-avatar")
+async def update_avatar_html(request: Request, user: User = Depends(get_current_user)):
+    if not user:
+        return templates.TemplateResponse(
+            "error.html",
+            {
+                "request": request,
+                "error": "401 Unauthorized",
+                "message": "User not logged in.",
+            },
+        )
+    return templates.TemplateResponse(
+        "update.html", {"request": request, "type": "avatar"}
+    )
+
+
+@user.post("/settings/update-avatar")
+async def update_avatar_(
+    request: Request,
+    user: User = Depends(get_current_user),
+    avatar: UploadFile = File(...),
+):
+    content = await avatar.read()
+    encoded = base64.b64encode(content)
+    response = requests.post(
+        f"https://freeimage.host/api/1/upload?key={secrets.FREEIMAGE_API_KEY}&format=json",
+        data={"source": encoded},
+    )
+    await update_avatar(user.username, response.json()["image"]["url"])
+    return templates.TemplateResponse(
+        "response.html",
+        {"request": request, "message": "Avatar updated successfully."},
     )
 
 

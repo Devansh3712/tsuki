@@ -165,6 +165,41 @@ async def delete_user(username: str) -> bool:
         return False
 
 
+async def read_avatar(username: str) -> str | None:
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    try:
+        async with connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute(
+                    "SELECT url FROM avatars WHERE username = %s", (username,)
+                )
+                url = await cursor.fetchone()
+                return url[0]
+    except:
+        return None
+
+
+async def update_avatar(username: str, url: str) -> bool:
+    connection = await psycopg.AsyncConnection.connect(
+        secrets.POSTGRES_URI, autocommit=True
+    )
+    try:
+        async with connection:
+            async with connection.cursor() as cursor:
+                await cursor.execute(
+                    """INSERT INTO avatars (username, url)
+                    VALUES (%s, %s)
+                    ON CONFLICT (username) DO UPDATE
+                    SET url = EXCLUDED.url""",
+                    (username, url),
+                )
+                return True
+    except:
+        return False
+
+
 async def create_post(username: str, post: Post) -> bool:
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
