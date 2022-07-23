@@ -37,6 +37,8 @@ async def get_explore_feed(
     else:
         limit = 10
     posts = await recommend_posts(user.username, limit)
+    for post in posts:
+        post.avatar = await read_avatar(post.username)
     return templates.TemplateResponse(
         "explore.html", {"request": request, "posts": posts}
     )

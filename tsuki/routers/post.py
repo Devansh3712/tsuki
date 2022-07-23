@@ -77,6 +77,7 @@ async def get_post(
 ):
     global limit
     post = await read_post(_id)
+    post.avatar = await read_avatar(post.username)
     if not post:
         return templates.TemplateResponse(
             "error.html",

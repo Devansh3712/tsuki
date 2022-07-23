@@ -9,6 +9,7 @@ content %}
     placeholder="Enter username"
     pattern="^[A-Za-z0-9._]{1,32}$"
     title="Usernames only contain alphabets, digits, periods (.) and underscores (_)"
+    style="margin-bottom: 30px"
     required
   />
 </form>
@@ -18,6 +19,13 @@ content %}
   action="/search/{{ user['username'] }}/toggle-follow"
   method="POST"
 >
+  <span class="avatar-small">
+    {% if user["avatar"] %}
+    <img src="{{ user['avatar'] }}" />
+    {% else %}
+    <img src="{{ url_for('static', path='/images/avatar.jpg') }}" />
+    {% endif %}
+  </span>
   <a href="/user/{{ user['username'] }}">
     <h3 style="display: inline-block">@{{ user['username'] }}</h3>
   </a>

@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 
@@ -22,6 +23,7 @@ class PostResponse(BaseModel):
     id: str
     body: str
     created_at: datetime
+    avatar: Optional[str] = None
 
 
 class Comment(BaseModel):

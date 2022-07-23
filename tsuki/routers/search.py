@@ -34,6 +34,7 @@ async def search_user(request: Request, user: User = Depends(get_current_user)):
         del user_data["password"]
         followers = await read_followers(user_data["username"])
         following = await read_following(user_data["username"])
+        user_data["avatar"] = await read_avatar(user_data["username"])
         user_data["posts"] = await read_post_count(user_data["username"])
         user_data["followers"] = len(followers)
         user_data["following"] = len(following)
@@ -64,6 +65,7 @@ async def load_more_user(request: Request, user: User = Depends(get_current_user
         del user_data["password"]
         followers = await read_followers(user_data["username"])
         following = await read_following(user_data["username"])
+        user_data["avatar"] = await read_avatar(user_data["username"])
         user_data["posts"] = await read_post_count(user_data["username"])
         user_data["followers"] = len(followers)
         user_data["following"] = len(following)

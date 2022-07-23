@@ -3,7 +3,16 @@ content %}
 <h2>User Feed</h2>
 <br />
 {% if posts %} {% for post in posts %}
-<h3><a href="/user/{{ post.username }}">@{{ post.username }}</a></h3>
+<span class="avatar-small">
+  {% if post.avatar %}
+  <img src="{{ post.avatar }}" />
+  {% else %}
+  <img src="{{ url_for('static', path='/images/avatar.jpg') }}" />
+  {% endif %}
+</span>
+<h3 style="display: inline-block">
+  <a href="/user/{{ post.username }}">@{{ post.username }}</a>
+</h3>
 <a href="/post/{{ post.id }}">
   <p>{{ post.body }}</p>
   <p class="separator">{{ post.created_at }}</p>

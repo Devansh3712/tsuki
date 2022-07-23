@@ -225,11 +225,9 @@ async def read_post(_id: str) -> PostResponse | None:
             async with connection.cursor() as cursor:
                 await cursor.execute("SELECT * FROM posts WHERE id = %s", (_id,))
                 result = await cursor.fetchone()
+                fields = list(PostResponse.__fields__.keys())
                 post = PostResponse(
-                    **{
-                        key: result[index]
-                        for index, key in enumerate(PostResponse.__fields__.keys())
-                    }
+                    **{key: result[index] for index, key in enumerate(fields[:-1])}
                 )
                 post.created_at = post.created_at.strftime("%d %B %Y, %H:%M:%S")
                 return post
@@ -267,13 +265,11 @@ async def read_recent_posts(username: str, limit: int = 5) -> List[PostResponse]
                     (username, limit),
                 )
                 results = await cursor.fetchall()
+                fields = list(PostResponse.__fields__.keys())
                 posts = []
                 for data in results:
                     post = PostResponse(
-                        **{
-                            key: data[index]
-                            for index, key in enumerate(PostResponse.__fields__.keys())
-                        }
+                        **{key: data[index] for index, key in enumerate(fields[:-1])}
                     )
                     post.created_at = post.created_at.strftime("%d %B %Y, %H:%M:%S")
                     posts.append(post)
@@ -297,13 +293,11 @@ async def read_feed_posts(username: str, limit: int = 10) -> List[PostResponse]:
                     (username, limit),
                 )
                 results = await cursor.fetchall()
+                fields = list(PostResponse.__fields__.keys())
                 posts = []
                 for data in results:
                     post = PostResponse(
-                        **{
-                            key: data[index]
-                            for index, key in enumerate(PostResponse.__fields__.keys())
-                        }
+                        **{key: data[index] for index, key in enumerate(fields[:-1])}
                     )
                     post.created_at = post.created_at.strftime("%d %B %Y, %H:%M:%S")
                     posts.append(post)

@@ -33,4 +33,6 @@ async def get_user_feed(
     else:
         limit = 10
     posts = await read_feed_posts(user.username, limit)
+    for post in posts:
+        post.avatar = await read_avatar(post.username)
     return templates.TemplateResponse("feed.html", {"request": request, "posts": posts})

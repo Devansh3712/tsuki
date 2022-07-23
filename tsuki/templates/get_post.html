@@ -1,8 +1,15 @@
 {% extends "base.html" %} {% block title %}Tsuki - Post{% endblock %} {% block
 content %}
 <br />
+<span class="avatar-small">
+  {% if post.avatar %}
+  <img src="{{ post.avatar }}" />
+  {% else %}
+  <img src="{{ url_for('static', path='/images/avatar.jpg') }}" />
+  {% endif %}
+</span>
 <u>
-  <h3>
+  <h3 style="margin-bottom: 30px">
     <a href="/user/{{ post.username }}">@{{ post.username }}</a>
   </h3>
 </u>
