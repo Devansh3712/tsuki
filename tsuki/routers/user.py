@@ -121,6 +121,7 @@ async def update_avatar_(
 ):
     content = await avatar.read()
     encoded = base64.b64encode(content)
+    # Store profile pictures
     response = requests.post(
         f"https://freeimage.host/api/1/upload?key={secrets.FREEIMAGE_API_KEY}&format=json",
         data={"source": encoded},

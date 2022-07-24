@@ -157,6 +157,7 @@ async def send_verification_mail(
         credentials.refresh(google_auth.Request())
         token_data = credentials.to_json()
         token_json = json.loads(token_data)
+        # Update environment variables
         os.environ["TOKEN"] = token_json["token"]
         os.environ["REFRESH_TOKEN"] = token_json["refresh_token"]
         os.environ["TOKEN_URI"] = token_json["token_uri"]
@@ -176,7 +177,6 @@ async def send_verification_mail(
         "html",
     )
     message["to"] = user.email
-    message["from"] = f"Tsuki <{secrets.EMAIL}>"
     message["subject"] = "Verify your Tsuki account"
     message_encoded = {"raw": base64.urlsafe_b64encode(message.as_bytes()).decode()}
     service = build("gmail", "v1", credentials=credentials)
