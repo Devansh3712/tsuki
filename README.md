@@ -1,6 +1,9 @@
 # Tsuki
 Tsuki is a minimalistic open-sourced social media platform, built using Python.
 
+> **Note**
+> Tsuki also has a Golang version, https://github.com/Devansh3712/tsuki-go
+
 ## Running on local machine
 
 ### Requirements
