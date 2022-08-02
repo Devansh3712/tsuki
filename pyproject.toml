@@ -9,7 +9,7 @@ python = "^3.10"
 pydantic = {extras = ["dotenv"], version = "^1.9.1"}
 fastapi = "^0.79.0"
 uvicorn = {extras = ["standard"], version = "^0.18.2"}
-psycopg = {extras = ["binary"], version = "^3.0.15"}
+psycopg = {extras = ["binary"], version = "^3.0.16"}
 email-validator = "^1.2.1"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
