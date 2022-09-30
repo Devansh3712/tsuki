@@ -2,6 +2,5 @@ venv
 .env
 __pycache__
 *.exe
-_token.py
 credentials.json
 token.json
