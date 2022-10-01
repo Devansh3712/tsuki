@@ -9,6 +9,7 @@ from tsuki.models import Comment, Post, PostResponse, User
 
 
 async def initdb():
+    """Run the init.sql script for creating tables for tsuki"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -22,6 +23,7 @@ async def initdb():
 # TODO:
 # Use Redis for storing shortened URLs for 48 hours.
 async def create_short_url(token: Any, _id: str) -> bool:
+    """Shortened token URL for verifying a user"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -37,6 +39,7 @@ async def create_short_url(token: Any, _id: str) -> bool:
 
 
 async def read_short_url(_id: str) -> str | None:
+    """Fetch the shortened URL"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -100,6 +103,7 @@ async def read_user(username: str) -> User | None:
 
 
 async def read_users(username: str, limit: int = 10) -> List[User]:
+    """Read multiple users at the same time, default limit 10"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -129,6 +133,7 @@ async def read_users(username: str, limit: int = 10) -> List[User]:
 
 
 async def update_user(username: str, updates: Mapping[str, Any]) -> bool:
+    """Update user profile information"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -166,6 +171,7 @@ async def delete_user(username: str) -> bool:
 
 
 async def read_avatar(username: str) -> str | None:
+    """Fetch user avatar URL for displaying on user profile"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -182,6 +188,7 @@ async def read_avatar(username: str) -> str | None:
 
 
 async def update_avatar(username: str, url: str) -> bool:
+    """Update user avatar URL"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -236,6 +243,7 @@ async def read_post(_id: str) -> PostResponse | None:
 
 
 async def read_post_count(username: str) -> int:
+    """Fetch the total number of posts made by a user"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -252,6 +260,7 @@ async def read_post_count(username: str) -> int:
 
 
 async def read_recent_posts(username: str, limit: int = 5) -> List[PostResponse]:
+    """Get data of recent posts made by a user for showing on user profile"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -279,6 +288,7 @@ async def read_recent_posts(username: str, limit: int = 5) -> List[PostResponse]
 
 
 async def read_feed_posts(username: str, limit: int = 10) -> List[PostResponse]:
+    """Read posts of users followed by the current user, ordered by most recent"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -307,6 +317,7 @@ async def read_feed_posts(username: str, limit: int = 10) -> List[PostResponse]:
 
 
 async def read_explore_posts(username: str) -> List[Tuple[str, ...]]:
+    """Fetch recent 1000 posts"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -327,6 +338,7 @@ async def read_explore_posts(username: str) -> List[Tuple[str, ...]]:
 
 
 async def read_liked_posts(username: str) -> List[Tuple[str, ...]]:
+    """Fetch last 100 posts liked by a user"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -381,6 +393,7 @@ async def toggle_follow(username: str, to_toggle: str):
 
 
 async def follows(username: str, following: str) -> bool | None:
+    """Check if a user follows another user"""
     if username == following:
         return None
     connection = await psycopg.AsyncConnection.connect(
@@ -399,6 +412,7 @@ async def follows(username: str, following: str) -> bool | None:
 
 
 async def read_followers(username: str) -> List[str]:
+    """Fetch the followers of a user"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -413,6 +427,7 @@ async def read_followers(username: str) -> List[str]:
 
 
 async def read_following(username: str) -> List[str]:
+    """Fetch the following of a user"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -449,6 +464,7 @@ async def toggle_vote(username: str, _id: str):
 
 
 async def voted(username: str, _id: str) -> bool:
+    """Check if the user has voted on the current post"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
@@ -465,6 +481,7 @@ async def voted(username: str, _id: str) -> bool:
 
 
 async def read_votes(_id: str) -> List[str]:
+    """Fetch total count of votes on a post"""
     connection = await psycopg.AsyncConnection.connect(
         secrets.POSTGRES_URI, autocommit=True
     )
