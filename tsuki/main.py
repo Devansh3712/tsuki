@@ -36,7 +36,8 @@ async def startup():
 
 
 @app.exception_handler(status.HTTP_400_BAD_REQUEST)
-async def page_not_found(request: Request, exception: Exception):
+async def bad_request(request: Request, exception: Exception):
+    """Error page for 400 bad request"""
     return templates.TemplateResponse(
         "error.html",
         {
@@ -49,6 +50,7 @@ async def page_not_found(request: Request, exception: Exception):
 
 @app.exception_handler(status.HTTP_404_NOT_FOUND)
 async def page_not_found(request: Request, exception: Exception):
+    """Error page for 404 page not found"""
     return templates.TemplateResponse(
         "error.html",
         {
@@ -61,6 +63,7 @@ async def page_not_found(request: Request, exception: Exception):
 
 @app.exception_handler(status.HTTP_500_INTERNAL_SERVER_ERROR)
 async def internal_server_error(request: Request, exception: Exception):
+    """Error page for 500 internal server error"""
     return templates.TemplateResponse(
         "error.html",
         {
@@ -73,6 +76,7 @@ async def internal_server_error(request: Request, exception: Exception):
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
+    """Initial home page"""
     return templates.TemplateResponse("index.html", {"request": request})
 
 
@@ -101,6 +105,7 @@ async def logout(request: Request, user: User = Depends(get_current_user)):
                 "message": "User not logged in.",
             },
         )
+    # Delete the authorization token from the current user session
     del request.session["Authorization"]
     return templates.TemplateResponse(
         "response.html", {"request": request, "message": "Logged out successfully."}
