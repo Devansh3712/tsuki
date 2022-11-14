@@ -21,7 +21,7 @@ Jinja2 = "^3.1.2"
 itsdangerous = "^2.1.2"
 watchdog = "^2.1.9"
 pytz = "^2022.1"
-pandas = "^1.4.3"
+pandas = "^1.5.1"
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"
