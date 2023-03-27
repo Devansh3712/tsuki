@@ -11,7 +11,7 @@ dnspython==2.2.1; python_version >= "3.6" and python_version < "4.0" and (python
 ecdsa==0.18.0; python_version >= "2.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0"
 email-validator==1.2.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
 fastapi==0.78.0; python_full_version >= "3.6.1"
-google-api-core==2.8.2; python_version >= "3.7"
+google-api-core==2.11.0; python_version >= "3.7"
 google-api-python-client==2.53.0; python_version >= "3.7"
 google-auth-httplib2==0.1.0
 google-auth-oauthlib==0.5.2; python_version >= "3.6"
