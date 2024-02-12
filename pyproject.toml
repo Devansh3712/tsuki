@@ -13,7 +13,7 @@ psycopg = {extras = ["binary"], version = "^3.0.16"}
 email-validator = "^1.2.1"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-python-multipart = "^0.0.5"
+python-multipart = "^0.0.9"
 google-api-python-client = "^2.55.0"
 google-auth-httplib2 = "^0.1.0"
 google-auth-oauthlib = "^0.5.2"
