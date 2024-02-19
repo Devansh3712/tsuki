@@ -24,7 +24,7 @@ pytz = "^2022.1"
 pandas = "^1.4.3"
 
 [tool.poetry.dev-dependencies]
-black = "^22.6.0"
+black = "^24.2.0"
 pyclean = "^2.2.0"
 pre-commit = "^2.20.0"
 
