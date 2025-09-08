@@ -16,7 +16,7 @@ python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 python-multipart = "^0.0.5"
 google-api-python-client = "^2.55.0"
 google-auth-httplib2 = "^0.1.0"
-google-auth-oauthlib = "^0.5.2"
+google-auth-oauthlib = "^1.2.2"
 Jinja2 = "^3.1.2"
 itsdangerous = "^2.1.2"
 watchdog = "^2.1.9"
